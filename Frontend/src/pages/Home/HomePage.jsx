@@ -2,6 +2,8 @@ import React from 'react';
 import NavBar from '../../component/template/NavBar';
 import Footer from './Footer';
 import FeatureExplain from '../../component/template/FeatureExplain';
+import HomeMain from '../../assets/images/Home1.webp'
+import HomeRealTime from '../../assets/images/HomeRealTime.jpg'
 
 export default function HomePage() {
   return (
@@ -56,7 +58,7 @@ export default function HomePage() {
               <div className="w-full mt-10 lg:mt-0">
                 <img
                   className="w-full max-w-md mx-auto lg:max-w-full"
-                  src="/api/placeholder/600/500"
+                  src={HomeMain}
                   alt="Student using Lexora for career planning"
                 />
               </div>
@@ -86,29 +88,6 @@ export default function HomePage() {
                   role="button"
                 >
                   Register Now
-                </a>
-
-                <a
-                  href="#"
-                  title=""
-                  className="inline-flex items-center justify-center w-full px-6 py-3 text-sm font-semibold text-white transition-all duration-200 bg-transparent border border-white rounded-md sm:w-auto sm:text-base sm:px-8 sm:py-4 hover:bg-white hover:text-blue-600 focus:bg-white focus:text-blue-600"
-                  role="button"
-                >
-                  <svg
-                    className="w-4 h-4 mr-2 -ml-1 sm:w-5 sm:h-5"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                  Contact Support
                 </a>
               </div>
 

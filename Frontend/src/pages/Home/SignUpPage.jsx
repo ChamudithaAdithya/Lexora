@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import userProfileHandleService from '../../services/userProfileHandleService';
 import Alert from '../../component/template/alert/Alert';
+import SignUp from '../../assets/images/signUp.jpg';
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
@@ -132,25 +133,11 @@ export default function SignUpPage() {
             <div>
               <img
                 class="w-full mx-auto"
-                src="https://cdn.rareblocks.xyz/collection/celebration/images/signup/1/cards.png"
+                src={SignUp}
                 alt=""
               />
 
-              <div class="w-full max-w-md mx-auto xl:max-w-xl">
-                <h3 class="text-2xl font-bold text-center text-black">Design your own card</h3>
-                <p class="leading-relaxed text-center text-gray-500 mt-2.5">
-                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do amet sint. Velit officia consequat
-                  duis.
-                </p>
-
-                <div class="flex items-center justify-center mt-10 space-x-3">
-                  <div class="bg-orange-500 rounded-full w-20 h-1.5"></div>
-
-                  <div class="bg-gray-200 rounded-full w-12 h-1.5"></div>
-
-                  <div class="bg-gray-200 rounded-full w-12 h-1.5"></div>
-                </div>
-              </div>
+              
             </div>
           </div>
         </div>

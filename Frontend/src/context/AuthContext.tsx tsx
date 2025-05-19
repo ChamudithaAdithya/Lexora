@@ -1,0 +1,106 @@
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode
+} from "react";
+import axios from "axios";
+
+// Types
+interface UserData {
+  token: string;
+  user_id: string;
+}
+interface AuthContextType {
+  user: UserData | null;
+  profile: Profile | null;
+  loading: boolean;
+  login: (data: UserData) => void;
+  logout: () => void;
+  refreshProfile: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const PROFILE_API = "http://localhost:8080/api/v1/profile/getProfile/";
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<UserData | null>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // 1) Bootstrap user from localStorage
+  useEffect(() => {
+    const raw = localStorage.getItem("user");
+    if (raw) {
+      setUser(JSON.parse(raw) as UserData);
+    }
+    setLoading(false);
+  }, []);
+
+  // 2) Always set Authorization header
+  useEffect(() => {
+    axios.defaults.headers.common["Authorization"] =
+      user?.token ?? "";
+  }, [user]);
+
+  // 3) Fetch (or re-fetch) profile whenever `user` changes
+  const refreshProfile = async () => {
+    if (!user) {
+      setProfile(null);
+      return;
+    }
+    try {
+      const res = await axios.get<Profile>(PROFILE_API + user.user_id);
+      setProfile(res.data);
+    } catch (err) {
+      console.error("Unable to load profile:", err);
+      // if 401, you could trigger logout() here, or show a toast
+      setProfile(null);
+    }
+  };
+
+  useEffect(() => {
+    // only call after initial bootstrap
+    if (user) {
+      refreshProfile();
+    }
+  }, [user]);
+
+  // 4) login & logout
+  const login = (data: UserData) => {
+    localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
+  };
+  const logout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    setProfile(null);
+    window.location.reload();
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{ user, profile, loading, login, logout, refreshProfile }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// Custom hook to consume
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) {
+    throw new Error("useAuth must be used within <AuthProvider>");
+  }
+  return ctx;
+};
+
+// Your Profile type (adapt to your API)
+interface Profile {
+  username: string;
+  email: string;
+  profile_image: string;
+  role?: string;
+}

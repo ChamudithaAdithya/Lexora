@@ -83,15 +83,14 @@ export default function SidebarSub() {
             </Link>
           </SidebarItem>
 
-          <SidebarItem
-            icon={<Users size={20} />}
-            text="Mentoring Sessions"
-            alwaysOpen={isLocation == '/mentorDashboard'}
-          >
-            {/* <Link to={''}> */}
-            <SidebarSubItem text="Members" active={isLocation == '/mentorDashboard'} />
-            {/* </Link> */}
-            <SidebarSubItem text="Permissions" />
+          {/* mentoring sessions with suggested mentors and My sessions */}
+          <SidebarItem icon={<Users size={20} />} 
+          text="Mentoring Sessions" alwaysOpen={isLocation == '/menteeDashboard'}>
+            <Link to={'/menteeDashboard'}>
+              <SidebarSubItem text="Suggested Mentors" active={isLocation == '/menteeDashboard'}/>
+          </Link>
+            <SidebarSubItem text="My Sessions" />
+
           </SidebarItem>
 
           <SidebarItem

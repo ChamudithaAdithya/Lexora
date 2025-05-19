@@ -600,7 +600,7 @@ export default function SkillTrendsPage() {
             </div>
 
             {/* Chart Content */}
-            <div className="p-2 bg-white rounded-lg shadow-sm mb-6">
+            <div className="p-2  mb-6">
               <JobDashboard
                 Datatype={'Skills'}
                 role={role}

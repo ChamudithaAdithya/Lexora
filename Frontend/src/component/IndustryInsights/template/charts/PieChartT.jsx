@@ -9,6 +9,14 @@ export default function PieChartT({ Datatype, DataSet }) {
     return COLOR_SCALE[Math.min(index, COLOR_SCALE.length - 1)];
   };
 
+  // Helper to parse salary strings like "$120,000" into numbers
+  const parseSalary = (salaryStr) => {
+    if (typeof salaryStr === 'string') {
+      return Number(salaryStr.replace(/[^\d]/g, ''));
+    }
+    return salaryStr;
+  };
+
   // Step 1: Preprocess and aggregate data depending on Datatype
   const chartData = useMemo(() => {
     if (Datatype === 'Skills') {
@@ -33,7 +41,7 @@ export default function PieChartT({ Datatype, DataSet }) {
       });
 
       const skillArray = Object.values(skillMap);
-      const maxCount = Math.max(...skillArray.map((s) => s.totalCount));
+      const maxTotal = Math.max(...skillArray.map((s) => s.totalCount));
 
       return skillArray
         .sort((a, b) => b.totalCount - a.totalCount)
@@ -43,11 +51,11 @@ export default function PieChartT({ Datatype, DataSet }) {
           value: skill.totalCount,
           maxCount: skill.maxCount,
           roles: skill.roles,
-          color: getColorShade(skill.totalCount, maxCount),
+          color: getColorShade(skill.totalCount, maxTotal),
         }));
     }
 
-    if (Datatype === 'Jobs' || Datatype === 'Salary') {
+    if (Datatype === 'Jobs') {
       const maxCount = Math.max(...DataSet.map((job) => job.count));
       const totalJobs = DataSet.reduce((sum, job) => sum + job.count, 0);
 
@@ -55,12 +63,41 @@ export default function PieChartT({ Datatype, DataSet }) {
         .sort((a, b) => b.count - a.count)
         .slice(0, 25)
         .map((job) => ({
-          ...job,
+          name: job.role,
+          value: job.count,
+          count: job.count,
+          growthRate: job.growthRate,
+          avgSalary: parseSalary(job.avgSalary),
           percentage: ((job.count / totalJobs) * 100).toFixed(1),
           color: getColorShade(job.count, maxCount),
-          name: job.role,
-          value: Datatype === 'Jobs' ? job.count : Datatype === 'Salary' ? job.maxSalary : job.count,
         }));
+    }
+
+    if (Datatype === 'Salary') {
+      // For salary, use the salary range values
+      const salaries = DataSet.map((job) => ({
+        min: parseSalary(job.minSalary),
+        avg: parseSalary(job.avgSalary),
+        max: parseSalary(job.maxSalary),
+      }));
+      const maxVal = Math.max(...salaries.map((s) => s.max));
+
+      return DataSet.sort((a, b) => parseSalary(b.avgSalary) - parseSalary(a.avgSalary))
+        .slice(0, 25)
+        .map((job) => {
+          const min = parseSalary(job.minSalary);
+          const avg = parseSalary(job.avgSalary);
+          const max = parseSalary(job.maxSalary);
+          return {
+            name: job.role,
+            minSalary: min,
+            avgSalary: avg,
+            maxSalary: max,
+            count: job.count,
+            value: avg, // show average salary as slice size
+            color: getColorShade(avg, maxVal),
+          };
+        });
     }
 
     return [];
@@ -92,32 +129,6 @@ export default function PieChartT({ Datatype, DataSet }) {
         );
       }
 
-      if (Datatype === 'Salary') {
-        return (
-          <div className="bg-white p-4 border border-gray-200 shadow-lg rounded">
-            <p className="font-bold text-gray-800 mb-2">{data.name}</p>
-            <div className="flex flex-col space-y-2">
-              <p className="text-sm">
-                <span className="font-medium">Min Salary: </span>
-                <span className="text-gray-700">${data.minSalary.toLocaleString()}</span>
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Avg Salary: </span>
-                <span className="text-gray-700">${data.avgSalary.toLocaleString()}</span>
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Max Salary: </span>
-                <span className="text-gray-700">${data.maxSalary.toLocaleString()}</span>
-              </p>
-              <p className="text-sm">
-                <span className="font-medium">Count: </span>
-                <span className="text-gray-700">{data.count.toLocaleString()} jobs</span>
-              </p>
-            </div>
-          </div>
-        );
-      }
-
       if (Datatype === 'Jobs') {
         return (
           <div className="bg-white p-4 border border-gray-200 shadow-lg rounded">
@@ -138,6 +149,32 @@ export default function PieChartT({ Datatype, DataSet }) {
               <p className="text-sm">
                 <span className="font-medium">Avg Salary: </span>
                 <span className="text-gray-700">${data.avgSalary.toLocaleString()}</span>
+              </p>
+            </div>
+          </div>
+        );
+      }
+
+      if (Datatype === 'Salary') {
+        return (
+          <div className="bg-white p-4 border border-gray-200 shadow-lg rounded">
+            <p className="font-bold text-gray-800 mb-2">{data.name}</p>
+            <div className="flex flex-col space-y-2">
+              <p className="text-sm">
+                <span className="font-medium">Min Salary: </span>
+                <span className="text-gray-700">${data.minSalary.toLocaleString()}</span>
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Avg Salary: </span>
+                <span className="text-gray-700">${data.avgSalary.toLocaleString()}</span>
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Max Salary: </span>
+                <span className="text-gray-700">${data.maxSalary.toLocaleString()}</span>
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Job Count: </span>
+                <span className="text-gray-700">{data.count.toLocaleString()}</span>
               </p>
             </div>
           </div>

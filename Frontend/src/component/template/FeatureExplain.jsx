@@ -1,4 +1,14 @@
 import React from 'react';
+import HomeRealTime from '../../assets/images/HomeRealTime.jpg';
+import HomeRealTime2 from '../../assets/images/HomeRealTime2.jpeg';
+import HomeRoadmap from '../../assets/images/HomeRoadmap.jpg';
+import HomeRoadmap2 from '../../assets/images/HomeRoadmap2.webp';
+import HomeMentoring from '../../assets/images/HomeMentoring.jpeg';
+import HomeMentoring2 from '../../assets/images/HomeMentoring.jpg';
+import HomeSkill from '../../assets/images/HomeSkill.jpg';
+import HomeSkill2 from '../../assets/images/HomeSkill2.jpeg';
+import HomePersona from '../../assets/images/HomePersona.jpeg';
+import HomePersona2 from '../../assets/images/HomePersona2.jpg';
 
 export default function FeatureExplain() {
   return (
@@ -10,13 +20,13 @@ export default function FeatureExplain() {
             <div className="relative max-w-xs mb-12">
               <img
                 className="object-bottom rounded-md shadow-lg"
-                src="/api/placeholder/400/300"
+                src={HomeRealTime}
                 alt="Dashboard showing industry trends"
               />
 
               <img
                 className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -right-12"
-                src="/api/placeholder/300/200"
+                src={HomeRealTime2}
                 alt="Career growth chart"
               />
             </div>
@@ -149,14 +159,14 @@ export default function FeatureExplain() {
           <div className="pr-12 sm:pr-0 order-1 md:order-2">
             <div className="relative max-w-xs mb-12 ml-auto">
               <img
-                className="object-bottom rounded-md shadow-lg"
-                src="/api/placeholder/400/300"
+                className="object-bottom rounded-md shadow-lg scale-130"
+                src={HomeRoadmap}
                 alt="Career roadmap visualization"
               />
 
               <img
-                className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -left-12"
-                src="/api/placeholder/300/200"
+                className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-20 -left-55"
+                src={HomeRoadmap2}
                 alt="Progress tracking interface"
               />
             </div>
@@ -169,13 +179,13 @@ export default function FeatureExplain() {
             <div className="relative max-w-xs mb-12">
               <img
                 className="object-bottom rounded-md shadow-lg"
-                src="/api/placeholder/400/300"
+                src={HomeSkill}
                 alt="Student analyzing skill gaps"
               />
 
               <img
-                className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -right-12"
-                src="/api/placeholder/300/200"
+                className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -right-28"
+                src={HomeSkill2}
                 alt="Skill assessment results"
               />
             </div>
@@ -306,14 +316,14 @@ export default function FeatureExplain() {
           <div className="pr-12 sm:pr-0 order-1 md:order-2">
             <div className="relative max-w-xs mb-12 ml-auto">
               <img
-                className="object-bottom rounded-md shadow-lg"
-                src="/api/placeholder/400/300"
+                className="object-bottom rounded-md shadow-lg scale-130"
+                src={HomePersona}
                 alt="Career persona profile"
               />
 
               <img
-                className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -left-12"
-                src="/api/placeholder/300/200"
+                className="absolute origin-bottom-right scale-90 rounded-md shadow-lg -bottom-20 -left-55"
+                src={HomePersona2}
                 alt="Career matching results"
               />
             </div>
@@ -326,13 +336,13 @@ export default function FeatureExplain() {
             <div className="relative max-w-xs mb-12">
               <img
                 className="object-bottom rounded-md shadow-lg"
-                src="/api/placeholder/400/300"
+                src={HomeMentoring}
                 alt="Mentor and mentee discussing career"
               />
 
               <img
                 className="absolute origin-bottom-right scale-75 rounded-md shadow-lg -bottom-12 -right-12"
-                src="/api/placeholder/300/200"
+                src={HomeMentoring2}
                 alt="Virtual mentoring session"
               />
             </div>
