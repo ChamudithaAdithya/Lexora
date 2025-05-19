@@ -1,144 +1,154 @@
-import React, { useState } from 'react';
-import { Pencil } from 'lucide-react';
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-const JobSkillsTable = () => {
-  // Sample data - replace with your actual data or state management
-  const [jobs, setJobs] = useState([
-    { id: 1, title: 'Frontend Developer', skill: 'React, JavaScript, HTML/CSS', progress: 75 },
-    { id: 2, title: 'Backend Developer', skill: 'Node.js, Express, MongoDB', progress: 60 },
-    { id: 3, title: 'UX Designer', skill: 'Figma, User Research, Wireframing', progress: 85 },
-    { id: 4, title: 'DevOps Engineer', skill: 'Docker, Kubernetes, CI/CD', progress: 10 },
-  ]);
+const RoadmapDetails = () => {
+  const [roadmaps, setRoadmaps] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sampleData,setSampleData] = useState([])
 
-  // Handler functions
-  const handleView = (id) => {
-    console.log(`Viewing job ${id}`);
-    // Add your view logic here
-  };
+  // Simulating data for demonstration
+  useEffect(() => {
+    // In a real application, you would use axios to fetch data
+    // This is just for demonstration purposes
+    const fetchData = async () => {
+    setIsLoading(true);
+    fetchRoadmapDetails();
+    };
+    // Simulate API call delay
+    setTimeout(fetchData, 1000);
+  }, []);
+
+  const fetchRoadmapDetails = (async()=>{
+    try {
+      const response = await axios.get(`http://localhost:8080/api/roadmaps/user/2`);
+      const dataList = response.data; // Make sure the backend returns an array
+      console.log("MAPPED DATA", dataList)
+      const mappedData = dataList.map(data => ({
+        r_Id: data.r_Id,
+        job_name: data.job_name,
+      }));
+      
+
+      setSampleData(mappedData);
+      setRoadmaps(mappedData);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching roadmaps:', err);
+      setError('Failed to load roadmaps. Please try again later.');
+    } finally {
+      setIsLoading(false);
+    }
+  })
 
   const handleDelete = (id) => {
-    setJobs(jobs.filter((job) => job.id !== id));
+    /* if (window.confirm('Are you sure you want to delete this roadmap?')) {
+      // In a real app, you would make an API call to delete
+      // For now, we'll just filter the state
+      setRoadmaps(roadmaps.filter(roadmap => roadmap.r_Id !== id));
+      alert('Roadmap deleted successfully');
+  }
+ */
+    try {
+      const response = axios.delete(`http://localhost:8080/api/roadmaps/rid/${id}`);
+      console.log(response.data);
+      alert('Roadmap deleted successfully');
+      fetchRoadmapDetails();
+    } catch (error) {
+      console.log(error);
+      window.alert("Network error. Failed to connect to network. Plaease check your internet connection");
+    }
   };
 
-  const handleAdd = () => {
-    // Example of adding a new empty job
-    const newId = jobs.length > 0 ? Math.max(...jobs.map((job) => job.id)) + 1 : 1;
-    setJobs([...jobs, { id: newId, title: '', skill: '', progress: 0 }]);
+  const handleEdit = (id) => {
+    // In a real app, you would navigate to the edit page
+    // For demo purposes, we'll just show an alert
+    alert(`Navigating to edit roadmap with ID: ${id}`);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-5 border border-red-200 rounded-lg bg-red-50 text-red-700">
+        <h3 className="font-bold mb-2">Error</h3>
+        <p>{error}</p>
+        <button 
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          onClick={() => window.location.reload()}
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-4">
-      <div className="overflow-x-auto bg-white rounded-lg shadow-lg border border-blue-100">
-        <table className="min-w-full divide-y divide-blue-200">
-          <thead className="bg-blue-50">
-            <tr>
-              <th
-                scope="col"
-                className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider"
-              >
-                Job Name
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider"
-              >
-                Skill
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider"
-              >
-                Progress
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider"
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-blue-100">
-            {jobs.map((job, index) => (
-              <tr
-                key={job.id}
-                className={`hover:bg-blue-50 transition-colors duration-150 ${
-                  index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'
-                }`}
-              >
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">{job.title}</div>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="text-sm text-gray-600">{job.skill}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="w-full bg-gray-200 rounded-full h-3 mb-1">
-                    <div
-                      className={`h-3 rounded-full ${
-                        job.progress < 40 ? 'bg-blue-300' : job.progress < 70 ? 'bg-blue-500' : 'bg-blue-700'
-                      }`}
-                      style={{ width: `${job.progress}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs font-medium text-blue-800">{job.progress}%</span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <div className="flex space-x-3">
-                    <button
-                      onClick={() => handleUpdate(job.id)}
-                      className="text-blue-600 hover:text-white bg-blue-100 hover:bg-blue-600 p-2 rounded-md transition-colors duration-200"
-                      title="Update details"
-                    >
-                      <Pencil size={20} />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(job.id)}
-                      className="text-red-600 hover:text-white bg-red-100 hover:bg-red-600 p-2 rounded-md transition-colors duration-200"
-                      title="Delete job"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-5 w-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {jobs.length === 0 && (
-        <div className="text-center py-12 bg-white rounded-lg shadow-md mt-4 border border-blue-100">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-16 w-16 mx-auto text-blue-300 mb-4"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-bold mb-5">Your Roadmaps</h2>
+      
+      {roadmaps.length === 0 ? (
+        <div className="text-center p-8">
+          <p className="text-gray-600">No roadmaps found. Create a new roadmap to get started.</p>
+          <button 
+            className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => alert('Navigate to create roadmap page')}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-            />
-          </svg>
-          <p className="text-blue-800 font-medium">No jobs found. Click "Generate new Roadmap" to get started.</p>
+            Create Roadmap
+          </button>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white border border-gray-200 rounded-lg">
+            <thead className="bg-gray-100">
+              <tr>
+                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ID
+                </th>
+                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Job Name
+                </th>
+                <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {roadmaps.map((roadmap) => (
+                <tr key={roadmap.r_Id} className="hover:bg-gray-50">
+                  <td className="py-4 px-6 text-sm text-gray-900">{roadmap.r_Id}</td>
+                  <td className="py-4 px-6 text-sm text-gray-900">{roadmap.job_name}</td>
+                  <td className="py-4 px-6 text-sm font-medium text-center">
+                    <div className="flex justify-center space-x-2">
+                      <button 
+                        onClick={() => handleEdit(roadmap.r_Id)}
+                        className="text-blue-600 hover:text-blue-900 px-3 py-1 bg-blue-100 rounded"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(roadmap.r_Id)}
+                        className="text-red-600 hover:text-red-900 px-3 py-1 bg-red-100 rounded"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
+      
     </div>
   );
 };
 
-export default JobSkillsTable;
+export default RoadmapDetails;

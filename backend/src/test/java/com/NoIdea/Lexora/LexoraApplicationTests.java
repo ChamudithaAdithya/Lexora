@@ -16,10 +16,22 @@ class LexoraApplicationTests {
 		WebDriverManager.chromedriver().setup();
 		WebDriver driver = new ChromeDriver();
 
-		driver.get("https://www.google.com/");
+		driver.get("http://localhost:5173/Lexora/");
 
+		// Click the singIn button
+		WebElement singInButton = driver.findElement(By.id("singInButton")); // or By.cssSelector() / By.xpath()
+		singInButton.click();
+
+		// Find and fill email and password
 		WebElement email = driver.findElement(By.name("email"));
-		System.out.println(email);
+		WebElement password = driver.findElement(By.name("password"));
+
+		email.sendKeys("anjalisewmini5@gmail.com");
+		password.sendKeys("12345678");
+
+		//Click the Login button
+		WebElement loginButton = driver.findElement(By.id("loginButton")); // or By.cssSelector() / By.xpath()
+		loginButton.click();
 
 		try {
 			Thread.sleep(3000);
@@ -27,7 +39,6 @@ class LexoraApplicationTests {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-
 
 		System.out.println(driver.getTitle());
 		driver.quit();

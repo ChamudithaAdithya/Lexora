@@ -1,162 +1,99 @@
 package com.NoIdea.Lexora.service.RoadMapService;
 
 import com.NoIdea.Lexora.model.RoadMapModel.Roadmap;
+import com.NoIdea.Lexora.model.RoadMapModel.Roadmap.ProgressItem;
 import com.NoIdea.Lexora.repository.RoadMapRepo.RoadMapRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
 public class RoadMapService {
 
-    private final RoadMapRepo roadmapRepository;
-
     @Autowired
-    public RoadMapService(RoadMapRepo roadmapRepository) {
-        this.roadmapRepository = roadmapRepository;
-    }
+    private RoadMapRepo roadMapRepo;
 
-    /**
-     * Save a new roadmap
-     */
-    public Roadmap saveRoadmap(Roadmap roadmap) {
-        // Check if a roadmap with the same rId already exists
-        if (roadmapRepository.existsByrId(roadmap.getrId())) {
-            throw new IllegalArgumentException("Roadmap with rId " + roadmap.getrId() + " already exists");
+    public Roadmap createRoadMap(Roadmap roadMapModel) {
+        if (roadMapRepo.existsByRId(roadMapModel.getrId())) {
+            throw new IllegalArgumentException(
+                    "Roadmap with rId " + roadMapModel.getrId() + " already exists");
         }
-        return roadmapRepository.save(roadmap);
+        return roadMapRepo.save(roadMapModel);
     }
 
-    /**
-     * Get all roadmaps
-     */
-    public List<Roadmap> getAllRoadmaps() {
-        return roadmapRepository.findAll();
+    public List<Roadmap> getAllRoadMaps() {
+        return roadMapRepo.findAll();
     }
 
-    /**
-     * Get roadmap by MongoDB id
-     */
-    public Optional<Roadmap> getRoadmapById(String id) {
-        return roadmapRepository.findById(id);
+    public Optional<Roadmap> getRoadMapById(String id) {
+        return roadMapRepo.findById(id);
     }
 
-    /**
-     * Get roadmap by rId
-     */
-    public Optional<Roadmap> getRoadmapByrId(Integer rId) {
-        return roadmapRepository.findByrId(rId);
+    public Optional<Roadmap> getRoadMapByRId(String rId) {
+        return roadMapRepo.findByRId(rId);
     }
 
-    /**
-     * Update an existing roadmap
-     */
-    public Roadmap updateRoadmap(String id, Roadmap updatedRoadmap) {
-        Optional<Roadmap> existingRoadmap = roadmapRepository.findById(id);
+    public List<Roadmap> getRoadMapsByUserId(Integer userId) {
+        return roadMapRepo.findByUserId(userId);
+    }
 
-        if (existingRoadmap.isPresent()) {
-            Roadmap roadmap = existingRoadmap.get();
+    public List<Roadmap> getRoadMapsByJobName(String jobName) {
+        return roadMapRepo.findByJobName(jobName);
+    }
 
-            // Update fields if provided in updatedRoadmap
-            if (updatedRoadmap.getJobName() != null) {
-                roadmap.setJobName(updatedRoadmap.getJobName());
-            }
+    public List<Roadmap> getRoadMapsByUserIdAndJobName(Integer userId, String jobName) {
+        return roadMapRepo.findByUserIdAndJobName(userId, jobName);
+    }
 
-            if (updatedRoadmap.getMainText() != null) {
-                roadmap.setMainText(updatedRoadmap.getMainText());
-            }
+    public Roadmap updateRoadMap(String id, Roadmap roadMapModel) {
+        return roadMapRepo.findById(id)
+                .map(existing -> {
+                    roadMapModel.setId(existing.getId());
+                    return roadMapRepo.save(roadMapModel);
+                })
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Roadmap with id " + id + " not found"));
+    }
 
-            // Keep the original rId
-            return roadmapRepository.save(roadmap);
-        } else {
-            throw new RuntimeException("Roadmap not found with id: " + id);
+    public Roadmap updateRoadMapByRId(String rId, Roadmap roadMapModel) {
+        return roadMapRepo.findByRId(rId)
+                .map(existing -> {
+                    roadMapModel.setId(existing.getId());
+                    return roadMapRepo.save(roadMapModel);
+                })
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Roadmap with rId " + rId + " not found"));
+    }
+
+    public Roadmap updateProgressStatus(String rId, String stepsId, String status, String notes) {
+        Roadmap roadmap = roadMapRepo.findByRId(rId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Roadmap with rId " + rId + " not found"));
+
+        Map<String, ProgressItem> progress = roadmap.getProgress();
+        if (!progress.containsKey(stepsId)) {
+            throw new IllegalArgumentException("Step with ID " + stepsId + " not found in roadmap");
         }
+
+        progress.put(stepsId, new ProgressItem(status, notes));
+        roadmap.setProgress(progress);
+        return roadMapRepo.save(roadmap);
     }
 
-    /**
-     * Delete a roadmap by id
-     */
-    public void deleteRoadmap(String id) {
-        if (!roadmapRepository.existsById(id)) {
-            throw new RuntimeException("Roadmap not found with id: " + id);
+    public void deleteRoadMap(String id) {
+        if (!roadMapRepo.existsById(id)) {
+            throw new IllegalArgumentException("Roadmap with id " + id + " not found");
         }
-        roadmapRepository.deleteById(id);
+        roadMapRepo.deleteById(id);
     }
 
-    /**
-     * Find roadmaps by job name (partial match)
-     */
-    public List<Roadmap> findRoadmapsByJobName(String jobName) {
-        return roadmapRepository.findByJobNameContainingIgnoreCase(jobName);
-    }
-
-    /**
-     * Add a new main text to an existing roadmap
-     */
-    public Roadmap addMainText(Integer rId, Roadmap.MainText mainText) {
-        Optional<Roadmap> optionalRoadmap = roadmapRepository.findByrId(rId);
-
-        if (optionalRoadmap.isPresent()) {
-            Roadmap roadmap = optionalRoadmap.get();
-            roadmap.getMainText().add(mainText);
-            return roadmapRepository.save(roadmap);
-        } else {
-            throw new RuntimeException("Roadmap not found with rId: " + rId);
+    public void deleteRoadMapByRId(String rId) {
+        if (!roadMapRepo.existsByRId(rId)) {
+            throw new IllegalArgumentException("Roadmap with rId " + rId + " not found");
         }
-    }
-
-    /**
-     * Add a subcategory to a main text in a roadmap
-     */
-    public Roadmap addSubCategory(Integer rId, String mainTextId,
-                                       Roadmap.SubCategory subCategory) {
-        Optional<Roadmap> optionalRoadmap = roadmapRepository.findByrId(rId);
-
-        if (optionalRoadmap.isPresent()) {
-            Roadmap roadmap = optionalRoadmap.get();
-
-            // Find the main text by id
-            for (Roadmap.MainText mt : roadmap.getMainText()) {
-                if (mt.getMainTextId().equals(mainTextId)) {
-                    mt.getSubCategory().add(subCategory);
-                    return roadmapRepository.save(roadmap);
-                }
-            }
-
-            throw new RuntimeException("Main text not found with id: " + mainTextId);
-        } else {
-            throw new RuntimeException("Roadmap not found with rId: " + rId);
-        }
-    }
-
-    /**
-     * Add a sub-step to a subcategory in a roadmap
-     */
-    public Roadmap addSubStep(Integer rId, String mainTextId,
-                                   String subId, Roadmap.SubStep subStep) {
-        Optional<Roadmap> optionalRoadmap = roadmapRepository.findByrId(rId);
-
-        if (optionalRoadmap.isPresent()) {
-            Roadmap roadmap = optionalRoadmap.get();
-
-            // Find the main text and subcategory by id
-            for (Roadmap.MainText mt : roadmap.getMainText()) {
-                if (mt.getMainTextId().equals(mainTextId)) {
-                    for (Roadmap.SubCategory sc : mt.getSubCategory()) {
-                        if (sc.getSubId().equals(subId)) {
-                            sc.getSubSteps().add(subStep);
-                            return roadmapRepository.save(roadmap);
-                        }
-                    }
-                    throw new RuntimeException("Subcategory not found with id: " + subId);
-                }
-            }
-
-            throw new RuntimeException("Main text not found with id: " + mainTextId);
-        } else {
-            throw new RuntimeException("Roadmap not found with rId: " + rId);
-        }
+        roadMapRepo.deleteByRId(rId);
     }
 }

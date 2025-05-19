@@ -34,11 +34,19 @@ public class Mentor {
 
     private String password;
 
+    @Column(nullable = false)
+    private String degree;
+
     private int experience;
 
     private String occupation;
 
     private String company;
+
+    private int feedbackScore;
+
+    @Column(nullable = false)
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private VerificationStatus verificationStatus;

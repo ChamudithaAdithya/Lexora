@@ -103,60 +103,45 @@ const NavBar = ({ activeNavMenu }) => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center">
             <div className="ml-14 flex items-baseline space-x-2">
-              <a
-                href="#"
-                className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
+              
+                
+             
+                <Link to={"/"}>
+                <div className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
                   activeNavMenu === 'home' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
-                } `}
-              >
-                Home
-              </a>
-              <a
-                href="#"
-                className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
+                } `}>Home</div>
+              </Link>
+              
+              <Link to={"/contactUs"}>
+                <div className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
+                  activeNavMenu === 'apps' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
+                } `}>App</div>
+              </Link>
+              <Link to={"/contactUs"}>
+                <div className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
                   activeNavMenu === 'contactUs' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
-                } `}
-              >
-                Apps
-              </a>
-              <a
-                href="#"
-                className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
-                  activeNavMenu === 'contactUs' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
-                } `}
-              >
-                Contact Us
-              </a>
-              <a
-                href="#"
-                className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
+                } `}>Contact Us</div>
+              </Link>
+              
+              <Link to={"/aboutus"}>
+                <div className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
                   activeNavMenu === 'aboutUs' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
-                } `}
-              >
-                About Us
-              </a>
-
-              <a
-                href="#"
-                className={`text-gray-900 hover:text-indigo-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
-                  activeNavMenu === 'team' ? 'border-indigo-600' : 'border-transparent hover:border-indigo-600'
-                } `}
-              >
-                Our Team
-              </a>
+                } `}>About Us</div>
+              </Link>
+              
             </div>
 
             {/* Auth Buttons */}
             <div className="flex-shrink-0 ml-22 mr-3">
               <Link to={'/signIn'}>
-                <div className="  block w-full px-5 py-2 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100 rounded-md flex items-center justify-center transition-colors duration-150">
+                <div id="singInButton" className="  block w-full px-5 py-2 text-center font-medium text-indigo-600 bg-gray-50 hover:bg-gray-100 rounded-md flex items-center justify-center transition-colors duration-150">
                   <LogIn size={18} className="mr-1" />
                   Sign In
                 </div>
               </Link>
             </div>
             <div className="flex-shrink-0">
-              <Link to={'/signIn'}>
+              <Link to={'/signUp'}>
                 <div className="block w-full px-5 py-2 text-center font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md flex items-center justify-center transition-colors duration-150 shadow-md">
                   <UserPlus size={18} className="mr-1" />
                   Sign Up

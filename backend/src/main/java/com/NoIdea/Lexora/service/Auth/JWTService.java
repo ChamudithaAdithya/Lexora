@@ -29,7 +29,7 @@ public class JWTService {
         return Jwts.builder()
                 .claims(claims)
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+1000*60*15))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*15*4*24))
                 .subject(userEmail)
                 .signWith(secretKey)
                 .compact();

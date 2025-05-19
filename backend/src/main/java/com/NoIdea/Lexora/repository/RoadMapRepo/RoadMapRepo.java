@@ -1,6 +1,3 @@
-// public class RoadMapController {
-    
-// }
 package com.NoIdea.Lexora.repository.RoadMapRepo;
 
 import com.NoIdea.Lexora.model.RoadMapModel.Roadmap;
@@ -13,17 +10,15 @@ import java.util.Optional;
 @Repository
 public interface RoadMapRepo extends MongoRepository<Roadmap, String> {
 
-    // Find roadmap by rId
-    Optional<Roadmap> findByrId(Integer rId);
+    Optional<Roadmap> findByRId(String rId);
 
-    // Find roadmaps by job name
-    List<Roadmap> findByJobNameContainingIgnoreCase(String jobName);
+    List<Roadmap> findByUserId(Integer userId);
 
-    // Check if a roadmap with given rId exists
-    boolean existsByrId(Integer rId);
+    List<Roadmap> findByJobName(String jobName);
 
-    // Find roadmaps that contain specific main text name
-    List<Roadmap> findByMainTextMainTextNameContainingIgnoreCase(String mainTextName);
+    List<Roadmap> findByUserIdAndJobName(Integer userId, String jobName);
 
-    // Custom query methods can be added here as needed
+    boolean existsByRId(String rId);
+
+    void deleteByRId(String rId);
 }

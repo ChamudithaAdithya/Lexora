@@ -29,7 +29,6 @@ export default function TopHeader({ HeaderMessage }) {
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = () => {
-      setShowCountryDropdown(false);
       setShowProfileDropdown(false);
     };
 

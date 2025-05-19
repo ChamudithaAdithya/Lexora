@@ -48,7 +48,8 @@ export default function RoadmapPage() {
             <div className="bg-white  overflow-hidden">
               
               
-              <Link to={'/searchRoadmap'}><button className="flex items-center gap-2 text-sm font-medium border border-gray-200 px-4 py-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors duration-200 bg-white">
+              <Link to={'/searchRoadmap'}>
+              <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                       Generate New Roadmap
               </button></Link>
               {/* Chart Content with Loading State */}

@@ -1,5 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { Briefcase, ChevronDown, Globe, ArrowLeft, TrendingUp, Filter } from 'lucide-react';
+import {
+  Briefcase,
+  ChevronDown,
+  Globe,
+  ArrowLeft,
+  TrendingUp,
+  Filter,
+  Search,
+  BarChart2,
+  PieChart,
+  LineChart,
+  Radar,
+  DollarSign,
+  Calendar,
+} from 'lucide-react';
 import SidebarSub from '../../../component/template/SidebarSub';
 import TopHeader from '../../../component/template/TopHeader';
 import JobDashboard from '../../../component/IndustryInsights/JobDashboard';
@@ -73,207 +87,375 @@ const categoryGroups = {
   'Domain-Specific IT': ['Marketing & Communications', 'Healthcare & Medicine IT', 'FinTech', 'EdTech'],
 };
 
-// Countries data
+// Countries data with flags (using country code for flag emojis)
 const countries = [
-  { name: 'Afghanistan', code: 'AF' },
-  { name: 'Albania', code: 'AL' },
-  { name: 'Algeria', code: 'DZ' },
-  { name: 'Andorra', code: 'AD' },
-  { name: 'Angola', code: 'AO' },
-  { name: 'Argentina', code: 'AR' },
-  { name: 'Armenia', code: 'AM' },
-  { name: 'Australia', code: 'AU' },
-  { name: 'Austria', code: 'AT' },
-  { name: 'Azerbaijan', code: 'AZ' },
-  { name: 'Bahamas', code: 'BS' },
-  { name: 'Bahrain', code: 'BH' },
-  { name: 'Bangladesh', code: 'BD' },
-  { name: 'Belarus', code: 'BY' },
-  { name: 'Belgium', code: 'BE' },
-  { name: 'Belize', code: 'BZ' },
-  { name: 'Benin', code: 'BJ' },
-  { name: 'Bhutan', code: 'BT' },
-  { name: 'Bolivia', code: 'BO' },
-  { name: 'Bosnia and Herzegovina', code: 'BA' },
-  { name: 'Botswana', code: 'BW' },
-  { name: 'Brazil', code: 'BR' },
-  { name: 'Brunei', code: 'BN' },
-  { name: 'Bulgaria', code: 'BG' },
-  { name: 'Burkina Faso', code: 'BF' },
-  { name: 'Burundi', code: 'BI' },
-  { name: 'Cambodia', code: 'KH' },
-  { name: 'Cameroon', code: 'CM' },
-  { name: 'Canada', code: 'CA' },
-  { name: 'Chad', code: 'TD' },
-  { name: 'Chile', code: 'CL' },
-  { name: 'China', code: 'CN' },
-  { name: 'Colombia', code: 'CO' },
-  { name: 'Comoros', code: 'KM' },
-  { name: 'Congo (Brazzaville)', code: 'CG' },
-  { name: 'Congo (Kinshasa)', code: 'CD' },
-  { name: 'Costa Rica', code: 'CR' },
-  { name: 'Croatia', code: 'HR' },
-  { name: 'Cuba', code: 'CU' },
-  { name: 'Cyprus', code: 'CY' },
-  { name: 'Czech Republic', code: 'CZ' },
-  { name: 'Denmark', code: 'DK' },
-  { name: 'Djibouti', code: 'DJ' },
-  { name: 'Dominica', code: 'DM' },
-  { name: 'Dominican Republic', code: 'DO' },
-  { name: 'Ecuador', code: 'EC' },
-  { name: 'Egypt', code: 'EG' },
-  { name: 'El Salvador', code: 'SV' },
-  { name: 'Equatorial Guinea', code: 'GQ' },
-  { name: 'Eritrea', code: 'ER' },
-  { name: 'Estonia', code: 'EE' },
-  { name: 'Eswatini', code: 'SZ' },
-  { name: 'Ethiopia', code: 'ET' },
-  { name: 'Fiji', code: 'FJ' },
-  { name: 'Finland', code: 'FI' },
-  { name: 'France', code: 'FR' },
-  { name: 'Gabon', code: 'GA' },
-  { name: 'Gambia', code: 'GM' },
-  { name: 'Georgia', code: 'GE' },
-  { name: 'Germany', code: 'DE' },
-  { name: 'Ghana', code: 'GH' },
-  { name: 'Greece', code: 'GR' },
-  { name: 'Grenada', code: 'GD' },
-  { name: 'Guatemala', code: 'GT' },
-  { name: 'Guinea', code: 'GN' },
-  { name: 'Guinea-Bissau', code: 'GW' },
-  { name: 'Guyana', code: 'GY' },
-  { name: 'Haiti', code: 'HT' },
-  { name: 'Honduras', code: 'HN' },
-  { name: 'Hungary', code: 'HU' },
-  { name: 'Iceland', code: 'IS' },
-  { name: 'India', code: 'IN' },
-  { name: 'Indonesia', code: 'ID' },
-  { name: 'Iran', code: 'IR' },
-  { name: 'Iraq', code: 'IQ' },
-  { name: 'Ireland', code: 'IE' },
-  { name: 'Israel', code: 'IL' },
-  { name: 'Italy', code: 'IT' },
-  { name: 'Jamaica', code: 'JM' },
-  { name: 'Japan', code: 'JP' },
-  { name: 'Jordan', code: 'JO' },
-  { name: 'Kazakhstan', code: 'KZ' },
-  { name: 'Kenya', code: 'KE' },
-  { name: 'Kiribati', code: 'KI' },
-  { name: 'Kuwait', code: 'KW' },
-  { name: 'Kyrgyzstan', code: 'KG' },
-  { name: 'Laos', code: 'LA' },
-  { name: 'Latvia', code: 'LV' },
-  { name: 'Lebanon', code: 'LB' },
-  { name: 'Lesotho', code: 'LS' },
-  { name: 'Liberia', code: 'LR' },
-  { name: 'Libya', code: 'LY' },
-  { name: 'Liechtenstein', code: 'LI' },
-  { name: 'Lithuania', code: 'LT' },
-  { name: 'Luxembourg', code: 'LU' },
-  { name: 'Madagascar', code: 'MG' },
-  { name: 'Malawi', code: 'MW' },
-  { name: 'Malaysia', code: 'MY' },
-  { name: 'Maldives', code: 'MV' },
-  { name: 'Mali', code: 'ML' },
-  { name: 'Malta', code: 'MT' },
-  { name: 'Mauritania', code: 'MR' },
-  { name: 'Mauritius', code: 'MU' },
-  { name: 'Mexico', code: 'MX' },
-  { name: 'Micronesia', code: 'FM' },
-  { name: 'Moldova', code: 'MD' },
-  { name: 'Monaco', code: 'MC' },
-  { name: 'Mongolia', code: 'MN' },
-  { name: 'Montenegro', code: 'ME' },
-  { name: 'Morocco', code: 'MA' },
-  { name: 'Mozambique', code: 'MZ' },
-  { name: 'Myanmar', code: 'MM' },
-  { name: 'Namibia', code: 'NA' },
-  { name: 'Nauru', code: 'NR' },
-  { name: 'Nepal', code: 'NP' },
-  { name: 'Netherlands', code: 'NL' },
-  { name: 'New Zealand', code: 'NZ' },
-  { name: 'Nicaragua', code: 'NI' },
-  { name: 'Niger', code: 'NE' },
-  { name: 'Nigeria', code: 'NG' },
-  { name: 'North Korea', code: 'KP' },
-  { name: 'North Macedonia', code: 'MK' },
-  { name: 'Norway', code: 'NO' },
-  { name: 'Oman', code: 'OM' },
-  { name: 'Pakistan', code: 'PK' },
-  { name: 'Palau', code: 'PW' },
-  { name: 'Panama', code: 'PA' },
-  { name: 'Papua New Guinea', code: 'PG' },
-  { name: 'Paraguay', code: 'PY' },
-  { name: 'Peru', code: 'PE' },
-  { name: 'Philippines', code: 'PH' },
-  { name: 'Poland', code: 'PL' },
-  { name: 'Portugal', code: 'PT' },
-  { name: 'Qatar', code: 'QA' },
-  { name: 'Romania', code: 'RO' },
-  { name: 'Russia', code: 'RU' },
-  { name: 'Rwanda', code: 'RW' },
-  { name: 'Saint Kitts and Nevis', code: 'KN' },
-  { name: 'Saint Lucia', code: 'LC' },
-  { name: 'Saint Vincent and the Grenadines', code: 'VC' },
-  { name: 'Samoa', code: 'WS' },
-  { name: 'San Marino', code: 'SM' },
-  { name: 'Saudi Arabia', code: 'SA' },
-  { name: 'Senegal', code: 'SN' },
-  { name: 'Serbia', code: 'RS' },
-  { name: 'Seychelles', code: 'SC' },
-  { name: 'Sierra Leone', code: 'SL' },
-  { name: 'Singapore', code: 'SG' },
-  { name: 'Slovakia', code: 'SK' },
-  { name: 'Slovenia', code: 'SI' },
-  { name: 'Solomon Islands', code: 'SB' },
-  { name: 'Somalia', code: 'SO' },
-  { name: 'South Africa', code: 'ZA' },
-  { name: 'South Korea', code: 'KR' },
-  { name: 'South Sudan', code: 'SS' },
-  { name: 'Spain', code: 'ES' },
-  { name: 'Sri Lanka', code: 'LK' },
-  { name: 'Sudan', code: 'SD' },
-  { name: 'Suriname', code: 'SR' },
-  { name: 'Sweden', code: 'SE' },
-  { name: 'Switzerland', code: 'CH' },
-  { name: 'Syria', code: 'SY' },
-  { name: 'Taiwan', code: 'TW' },
-  { name: 'Tajikistan', code: 'TJ' },
-  { name: 'Tanzania', code: 'TZ' },
-  { name: 'Thailand', code: 'TH' },
-  { name: 'Timor-Leste', code: 'TL' },
-  { name: 'Togo', code: 'TG' },
-  { name: 'Tonga', code: 'TO' },
-  { name: 'Trinidad and Tobago', code: 'TT' },
-  { name: 'Tunisia', code: 'TN' },
-  { name: 'Turkey', code: 'TR' },
-  { name: 'Turkmenistan', code: 'TM' },
-  { name: 'Tuvalu', code: 'TV' },
-  { name: 'Uganda', code: 'UG' },
-  { name: 'Ukraine', code: 'UA' },
-  { name: 'United Arab Emirates', code: 'AE' },
-  { name: 'United Kingdom', code: 'GB' },
-  { name: 'United States', code: 'US' },
-  { name: 'Uruguay', code: 'UY' },
-  { name: 'Uzbekistan', code: 'UZ' },
-  { name: 'Vanuatu', code: 'VU' },
-  { name: 'Venezuela', code: 'VE' },
-  { name: 'Vietnam', code: 'VN' },
-  { name: 'Yemen', code: 'YE' },
-  { name: 'Zambia', code: 'ZM' },
-  { name: 'Zimbabwe', code: 'ZW' },
+  { name: 'United States', code: 'US', flag: '🇺🇸' },
+  { name: 'Canada', code: 'CA', flag: '🇨🇦' },
+  { name: 'United Kingdom', code: 'UK', flag: '🇬🇧' },
+  { name: 'Australia', code: 'AU', flag: '🇦🇺' },
+  { name: 'Germany', code: 'DE', flag: '🇩🇪' },
+  { name: 'France', code: 'FR', flag: '🇫🇷' },
+  { name: 'Japan', code: 'JP', flag: '🇯🇵' },
+  { name: 'India', code: 'IN', flag: '🇮🇳' },
+  { name: 'Singapore', code: 'SG', flag: '🇸🇬' },
+  { name: 'Netherlands', code: 'NL', flag: '🇳🇱' },
+  { name: 'Israel', code: 'IL', flag: '🇮🇱' },
+  { name: 'Sweden', code: 'SE', flag: '🇸🇪' },
+  { name: 'Switzerland', code: 'CH', flag: '🇨🇭' },
+  { name: 'South Korea', code: 'KR', flag: '🇰🇷' },
+  { name: 'Brazil', code: 'BR', flag: '🇧🇷' },
 ];
+
+// Time-related data
+const years = ['2023', '2024', '2025', '2026'];
+const months = [
+  { name: 'January', value: '01', short: 'Jan' },
+  { name: 'February', value: '02', short: 'Feb' },
+  { name: 'March', value: '03', short: 'Mar' },
+  { name: 'April', value: '04', short: 'Apr' },
+  { name: 'May', value: '05', short: 'May' },
+  { name: 'June', value: '06', short: 'Jun' },
+  { name: 'July', value: '07', short: 'Jul' },
+  { name: 'August', value: '08', short: 'Aug' },
+  { name: 'September', value: '09', short: 'Sep' },
+  { name: 'October', value: '10', short: 'Oct' },
+  { name: 'November', value: '11', short: 'Nov' },
+  { name: 'December', value: '12', short: 'Dec' },
+];
+
+// Get weeks in a month based on the year and month
+const getWeeksInMonth = (year, monthIndex) => {
+  const weeks = [];
+  const firstDay = new Date(year, monthIndex, 1);
+  const lastDay = new Date(year, monthIndex + 1, 0);
+
+  // Calculate the date for the first Monday (or first day if it's Monday)
+  let currentDate = new Date(firstDay);
+  if (currentDate.getDay() !== 1) {
+    // If not Monday
+    currentDate.setDate(currentDate.getDate() - (currentDate.getDay() || 7) + 1);
+    // If this moved us before the month, set to first day of month
+    if (currentDate < firstDay) {
+      currentDate = new Date(firstDay);
+    }
+  }
+
+  let weekCounter = 1;
+
+  // Add weeks until we pass the end of the month
+  while (currentDate <= lastDay) {
+    const weekStart = new Date(currentDate);
+    const weekEnd = new Date(currentDate);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+
+    weeks.push({
+      number: weekCounter,
+      name: `Week ${weekCounter}`,
+      value: weekCounter.toString().padStart(2, '0'),
+      start: weekStart,
+      end: new Date(Math.min(weekEnd.getTime(), lastDay.getTime())),
+    });
+
+    currentDate.setDate(currentDate.getDate() + 7);
+    weekCounter++;
+  }
+
+  return weeks;
+};
+
+// Filter component
+const FilterButton = ({ icon: Icon, label, active, onClick, className }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 ${
+      active ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+    } ${className || ''}`}
+  >
+    {Icon && <Icon size={16} />}
+    <span className="text-sm font-medium">{label}</span>
+  </button>
+);
+
+// Country selector component
+const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredCountries, setFilteredCountries] = useState(countries);
+
+  useEffect(() => {
+    if (isOpen) {
+      setFilteredCountries(
+        countries.filter((country) => country.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+    }
+  }, [searchTerm, isOpen]);
+
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Globe size={16} className="text-blue-600" />
+        <span className="text-sm font-medium mr-1">{selectedCountry.flag}</span>
+        <span className="text-sm text-gray-700">{selectedCountry.name}</span>
+        <ChevronDown size={14} className={`ml-1 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </div>
+
+      {isOpen && (
+        <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-64">
+          <div className="p-2 border-b">
+            <input
+              type="text"
+              placeholder="Search countries..."
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+
+          <div className="max-h-60 overflow-y-auto py-1">
+            {filteredCountries.map((country) => (
+              <div
+                key={country.code}
+                className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100 ${
+                  selectedCountry.code === country.code ? 'bg-blue-50 text-blue-700' : ''
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedCountry(country);
+                  setIsOpen(false);
+                }}
+              >
+                <span className="text-sm mr-1">{country.flag}</span>
+                <span className="text-sm">{country.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Time period selector component
+const TimePeriodSelector = ({
+  selectedYear,
+  setSelectedYear,
+  selectedMonth,
+  setSelectedMonth,
+  selectedWeek,
+  setSelectedWeek,
+  timeFilterMode,
+  setTimeFilterMode,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [weeks, setWeeks] = useState([]);
+
+  // Update weeks when year or month changes
+  useEffect(() => {
+    if (selectedMonth) {
+      const monthIndex = parseInt(selectedMonth.value) - 1;
+      setWeeks(getWeeksInMonth(parseInt(selectedYear), monthIndex));
+    }
+  }, [selectedYear, selectedMonth]);
+
+  // Set default week when weeks change
+  useEffect(() => {
+    if (weeks.length > 0 && (!selectedWeek || !weeks.find((w) => w.value === selectedWeek.value))) {
+      setSelectedWeek(weeks[0]);
+    }
+  }, [weeks]);
+
+  // Get display text based on selected time period
+  const getTimeDisplayText = () => {
+    switch (timeFilterMode) {
+      case 'year':
+        return selectedYear;
+      case 'month':
+        return `${selectedMonth.short} ${selectedYear}`;
+      case 'week':
+        return `Week ${selectedWeek?.value}, ${selectedMonth.short} ${selectedYear}`;
+      default:
+        return selectedYear;
+    }
+  };
+
+  return (
+    <div className="relative">
+      <div
+        className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <Calendar size={16} className="text-blue-600" />
+        <span className="text-sm text-gray-700">{getTimeDisplayText()}</span>
+        <ChevronDown size={14} className={`ml-1 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+      </div>
+
+      {isOpen && (
+        <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-72">
+          {/* Time granularity tabs */}
+          <div className="flex bg-gray-50 p-1 rounded-t-md">
+            {[
+              { id: 'year', label: 'Yearly', icon: Calendar },
+              { id: 'month', label: 'Monthly', icon: Calendar },
+              { id: 'week', label: 'Weekly', icon: Calendar },
+            ].map((period) => (
+              <button
+                key={period.id}
+                className={`flex items-center justify-center gap-1 flex-1 py-1.5 text-xs font-medium rounded transition-all duration-200 ${
+                  timeFilterMode === period.id
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800 hover:bg-gray-200'
+                }`}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setTimeFilterMode(period.id);
+                }}
+              >
+                <period.icon size={14} />
+                {period.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Year selection */}
+          <div className="p-3 border-b">
+            <div className="text-xs text-gray-500 font-medium mb-2">Year</div>
+            <div className="grid grid-cols-4 gap-2">
+              {years.map((year) => (
+                <button
+                  key={year}
+                  className={`py-1 text-sm rounded-md transition-all ${
+                    selectedYear === year ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedYear(year);
+                  }}
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Month selection - visible when in month or week mode */}
+          {(timeFilterMode === 'month' || timeFilterMode === 'week') && (
+            <div className="p-3 border-b">
+              <div className="text-xs text-gray-500 font-medium mb-2">Month</div>
+              <div className="grid grid-cols-4 gap-2">
+                {months.map((month) => (
+                  <button
+                    key={month.value}
+                    className={`py-1 text-xs rounded-md transition-all ${
+                      selectedMonth.value === month.value
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedMonth(month);
+                    }}
+                  >
+                    {month.short}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Week selection - visible only in week mode */}
+          {timeFilterMode === 'week' && weeks.length > 0 && (
+            <div className="p-3 border-b max-h-44 overflow-y-auto">
+              <div className="text-xs text-gray-500 font-medium mb-2">Week</div>
+              <div className="grid grid-cols-2 gap-2">
+                {weeks.map((week) => (
+                  <button
+                    key={week.value}
+                    className={`py-1.5 text-xs rounded-md transition-all ${
+                      selectedWeek && selectedWeek.value === week.value
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedWeek(week);
+                    }}
+                  >
+                    {`Week ${week.value} (${week.start.getDate()}-${week.end.getDate()})`}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Apply button */}
+          <div className="p-2 flex justify-end bg-gray-50 rounded-b-md">
+            <button
+              className="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsOpen(false);
+              }}
+            >
+              Apply
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Time period toggle component
+const TimePeriodToggle = ({ timeFilterMode, setTimeFilterMode }) => {
+  return (
+    <div className="flex bg-gray-100 p-1 rounded-lg shadow-sm">
+      {[
+        { id: 'year', label: 'Yearly', icon: Calendar },
+        { id: 'month', label: 'Monthly', icon: Calendar },
+        { id: 'week', label: 'Weekly', icon: Calendar },
+      ].map((period) => (
+        <button
+          key={period.id}
+          onClick={() => setTimeFilterMode(period.id)}
+          className={`p-2 rounded-md flex items-center gap-1 transition-all duration-200 ${
+            timeFilterMode === period.id
+              ? 'bg-white shadow-sm text-blue-600'
+              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-200'
+          }`}
+          title={period.label}
+        >
+          <period.icon size={16} />
+          <span className="text-xs font-medium">{period.label}</span>
+        </button>
+      ))}
+    </div>
+  );
+};
 
 export default function JobTrendingsPage() {
   const [selectedCategory, setSelectedCategory] = useState('Software Development & Engineering');
   const [selectedYear, setSelectedYear] = useState('2025');
   const [selectedCountry, setSelectedCountry] = useState(countries[0]);
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [chartTitle, setChartTitle] = useState('Software Engineering Trends');
   const [role, setRole] = useState('');
   const [jobData, setJobData] = useState([]);
   const [activeGroup, setActiveGroup] = useState('All');
+
+  const [salaryData, setSalaryData] = useState([]);
+
+  const [activeChart, setActiveChart] = useState('bar');
+
+  const [selectedMonth, setSelectedMonth] = useState(months[new Date().getMonth()]);
+  const [weeks, setWeeks] = useState([]);
+  const [selectedWeek, setSelectedWeek] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const [timeFilterMode, setTimeFilterMode] = useState('year'); // 'year', 'month', 'week'
 
   const { fetchJobData, isLoading: dataLoading } = GoogleAIStudio();
 
@@ -324,47 +506,71 @@ export default function JobTrendingsPage() {
 
         <div className="flex-1 overflow-y-auto p-6 bg-white">
           <div className="m-5">
-            <div className="mb-6 ">
-              <div className="flex flex-row object-center items-center mb-2">
-                <h2 className="text-lg font-medium mr-2">Worldwide Job Trends</h2>
+            <div className="mb-6">
+              <div className="flex flex-row object-center items-center mb-4">
+                <h2 className="text-xl font-semibold mr-2">Worldwide Skill Trends</h2>
               </div>
-              <div className="flex items-center space-x-4 mt-2">
-                <div className="relative">
-                  <div
-                    className="flex items-center border rounded-md px-3 py-2 bg-white cursor-pointer"
-                    onClick={(e) => toggleDropdown(setShowCountryDropdown, showCountryDropdown, e)}
-                  >
-                    <Globe size={16} className="mr-2" />
-                    <span>{selectedCountry.name}</span>
-                    <ChevronDown size={16} className="ml-2" />
-                  </div>
-                  {showCountryDropdown && (
-                    <div className="absolute left-0 mt-1 bg-white border rounded-md shadow-lg z-10 max-h-60 overflow-y-auto w-48">
-                      {countries.map((country) => (
-                        <div
-                          key={country.code}
-                          className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                          onClick={() => {
-                            setSelectedCountry(country);
-                            setShowCountryDropdown(false);
-                          }}
-                        >
-                          {country.name}
-                        </div>
-                      ))}
-                    </div>
+
+              {/* Filters */}
+              <div className="flex flex-wrap items-center gap-3 bg-gray-50 p-3 rounded-xl">
+                {/* Country Selector */}
+                <CountrySelector selectedCountry={selectedCountry} setSelectedCountry={setSelectedCountry} />
+
+                {/* Time Period Selector */}
+                <TimePeriodSelector
+                  selectedYear={selectedYear}
+                  setSelectedYear={setSelectedYear}
+                  selectedMonth={selectedMonth}
+                  setSelectedMonth={setSelectedMonth}
+                  selectedWeek={selectedWeek}
+                  setSelectedWeek={setSelectedWeek}
+                  timeFilterMode={timeFilterMode}
+                  setTimeFilterMode={setTimeFilterMode}
+                />
+
+                {/* Time Period Toggle */}
+                <TimePeriodToggle timeFilterMode={timeFilterMode} setTimeFilterMode={setTimeFilterMode} />
+
+                {/* Search input */}
+                <div className="flex relative w-full md:w-auto">
+                  <input
+                    type="text"
+                    placeholder="Search categories"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-lg w-full md:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all duration-200 shadow-sm"
+                  />
+                  <Search size={16} className="absolute left-3 top-2.5 text-gray-400" />
+                  {searchQuery && (
+                    <button
+                      className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      <X size={14} />
+                    </button>
                   )}
                 </div>
-                <div className="flex space-x-2">
-                  {years.map((year) => (
+
+                {/* Chart type selector */}
+                <div className="flex bg-gray-100 p-1 rounded-lg shadow-sm ml-auto">
+                  {[
+                    { id: 'bar', label: 'Bar', icon: BarChart2 },
+                    { id: 'pie', label: 'Pie', icon: PieChart },
+                    { id: 'line', label: 'Line', icon: LineChart },
+                    { id: 'radar', label: 'Radar', icon: Radar },
+                    { id: 'salary', label: 'Salary', icon: DollarSign },
+                  ].map((chart) => (
                     <button
-                      key={year}
-                      className={`px-3 py-1 text-sm rounded-md ${
-                        selectedYear === year ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                      key={chart.id}
+                      onClick={() => setActiveChart(chart.id)}
+                      className={`p-2 rounded-md transition-all duration-200 ${
+                        activeChart === chart.id
+                          ? 'bg-white shadow-sm text-blue-600'
+                          : 'text-gray-600 hover:text-gray-800 hover:bg-gray-200'
                       }`}
-                      onClick={() => setSelectedYear(year)}
+                      title={chart.label}
                     >
-                      {year}
+                      <chart.icon className="h-5 w-5" />
                     </button>
                   ))}
                 </div>
@@ -378,7 +584,10 @@ export default function JobTrendingsPage() {
                 role={role}
                 country={selectedCountry}
                 dateTime={selectedYear}
+                month={timeFilterMode === 'month' || timeFilterMode === 'week' ? selectedMonth.value : null}
+                week={timeFilterMode === 'week' ? selectedWeek?.value : null}
                 jobCategory={selectedCategory}
+                chartType={activeChart}
               />
             </div>
             {/* Job Categories Section */}
@@ -446,3 +655,6 @@ export default function JobTrendingsPage() {
     </div>
   );
 }
+
+
+export { TimePeriodSelector, getWeeksInMonth };

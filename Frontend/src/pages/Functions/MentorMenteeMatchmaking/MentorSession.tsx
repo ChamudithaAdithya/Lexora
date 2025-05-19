@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Bell, ChevronDown } from "lucide-react";
 import SidebarSub from "../../../component/template/SidebarSub";
-import TopHeaderMentor from "../../../component/MentorMentee/TopHeaderMentor";
+
+import { useNavigate } from "react-router-dom";
+import TopHeader from "../../../component/template/TopHeader";
+
 
 const sessions = [
   {
@@ -26,6 +29,13 @@ const upcomingSessions = [
 ];
 
 export default function MentorSessions() {
+
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/menteeSelectMedia')
+  }
+
   return (
     <div className="flex h-screen bg-white">
       {/* Sidebar */}
@@ -33,8 +43,7 @@ export default function MentorSessions() {
 
       {/* Main Content */}
       <div className="flex-1 p-6">
-        <TopHeaderMentor />
-        {/* Header */}
+        <TopHeader HeaderMessage={'Mentor'}/>
         <div className="bg-white pb-4">
           <h1 className="text-2xl font-bold pb-2 border-b border-gray-300 mt-6 mb-4">My Sessions</h1>
         </div>
@@ -64,7 +73,7 @@ export default function MentorSessions() {
         </div>
 
         <div className="flex justify-end mt-4">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mt-4 mb-4">
+          <button onClick={handleClick} className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 mt-4 mb-4">
             Create a new session
           </button>
         </div>
