@@ -89,6 +89,18 @@ const categoryGroups = {
 
 // Countries data with flags (using country code for flag emojis)
 const countries = [
+  { name: 'Sri Lanka', code: 'LK', flag: '🇱🇰' },
+  { name: 'India', code: 'IN', flag: '🇮🇳' },
+  { name: 'Bangladesh', code: 'BD', flag: '🇧🇩' },
+  { name: 'Pakistan', code: 'PK', flag: '🇵🇰' },
+  { name: 'Nepal', code: 'NP', flag: '🇳🇵' },
+  { name: 'Maldives', code: 'MV', flag: '🇲🇻' },
+  { name: 'Thailand', code: 'TH', flag: '🇹🇭' },
+  { name: 'Malaysia', code: 'MY', flag: '🇲🇾' },
+  { name: 'Singapore', code: 'SG', flag: '🇸🇬' },
+  { name: 'United Arab Emirates', code: 'AE', flag: '🇦🇪' },
+
+  // Other popular countries for jobs
   { name: 'United States', code: 'US', flag: '🇺🇸' },
   { name: 'Canada', code: 'CA', flag: '🇨🇦' },
   { name: 'United Kingdom', code: 'UK', flag: '🇬🇧' },
@@ -96,15 +108,14 @@ const countries = [
   { name: 'Germany', code: 'DE', flag: '🇩🇪' },
   { name: 'France', code: 'FR', flag: '🇫🇷' },
   { name: 'Japan', code: 'JP', flag: '🇯🇵' },
-  { name: 'India', code: 'IN', flag: '🇮🇳' },
-  { name: 'Singapore', code: 'SG', flag: '🇸🇬' },
+  { name: 'South Korea', code: 'KR', flag: '🇰🇷' },
   { name: 'Netherlands', code: 'NL', flag: '🇳🇱' },
-  { name: 'Israel', code: 'IL', flag: '🇮🇱' },
   { name: 'Sweden', code: 'SE', flag: '🇸🇪' },
   { name: 'Switzerland', code: 'CH', flag: '🇨🇭' },
-  { name: 'South Korea', code: 'KR', flag: '🇰🇷' },
+  { name: 'Israel', code: 'IL', flag: '🇮🇱' },
   { name: 'Brazil', code: 'BR', flag: '🇧🇷' },
 ];
+
 
 // Time-related data
 const years = ['2023', '2024', '2025', '2026'];
@@ -191,7 +202,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
   }, [searchTerm, isOpen]);
 
   return (
-    <div className="relative">
+    <div className="relative" id='Country'>
       <div
         className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
         onClick={() => setIsOpen(!isOpen)}
@@ -206,6 +217,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
         <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-64">
           <div className="p-2 border-b">
             <input
+              id="SearchCountries"
               type="text"
               placeholder="Search countries..."
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -218,6 +230,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
           <div className="max-h-60 overflow-y-auto py-1">
             {filteredCountries.map((country) => (
               <div
+              id={country.name}
                 key={country.code}
                 className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100 ${
                   selectedCountry.code === country.code ? 'bg-blue-50 text-blue-700' : ''
@@ -283,7 +296,7 @@ const TimePeriodSelector = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative" id='DateTime'>
       <div
         className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
         onClick={() => setIsOpen(!isOpen)}
@@ -304,6 +317,7 @@ const TimePeriodSelector = ({
             ].map((period) => (
               <button
                 key={period.id}
+                id={period.id}
                 className={`flex items-center justify-center gap-1 flex-1 py-1.5 text-xs font-medium rounded transition-all duration-200 ${
                   timeFilterMode === period.id
                     ? 'bg-white text-blue-600 shadow-sm'
@@ -394,6 +408,7 @@ const TimePeriodSelector = ({
           {/* Apply button */}
           <div className="p-2 flex justify-end bg-gray-50 rounded-b-md">
             <button
+              id='ApplyDateTime'
               className="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
@@ -508,7 +523,7 @@ export default function JobTrendingsPage() {
           <div className="m-5">
             <div className="mb-6">
               <div className="flex flex-row object-center items-center mb-4">
-                <h2 className="text-xl font-semibold mr-2">Worldwide Skill Trends</h2>
+                <h2 className="text-xl font-semibold mr-2">Worldwide Job Trends</h2>
               </div>
 
               {/* Filters */}
@@ -562,6 +577,7 @@ export default function JobTrendingsPage() {
                   ].map((chart) => (
                     <button
                       key={chart.id}
+                      id={chart.id}
                       onClick={() => setActiveChart(chart.id)}
                       className={`p-2 rounded-md transition-all duration-200 ${
                         activeChart === chart.id
@@ -613,6 +629,7 @@ export default function JobTrendingsPage() {
                   </button>
                   {Object.keys(categoryGroups).map((group) => (
                     <button
+                      id={group}
                       key={group}
                       className={`px-3 py-1 text-sm rounded-md ${
                         activeGroup === group ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -628,6 +645,7 @@ export default function JobTrendingsPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {getCategoriesToShow().map((category, index) => (
                   <div
+                    id={category}
                     key={index}
                     className={`p-4 rounded-lg cursor-pointer transition-all duration-200 transform hover:scale-102 bg-white border border-gray-200 ${
                       selectedCategory === category ? 'border-blue-500 bg-blue-50' : ''

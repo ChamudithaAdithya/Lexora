@@ -12,7 +12,7 @@ const categories = [
   'Healthcare & Medicine',
 ];
 
-export default function TopHeader({ HeaderMessage }) {
+export default function TopHeader({ HeaderMessage, handleGetUserDetails }) {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [profileDetails, setProfileDetails] = useState('');
 
@@ -21,6 +21,7 @@ export default function TopHeader({ HeaderMessage }) {
     if (user.user_id && user.token) {
       userProfileHandleService.findUserProfileById(user.user_id).then((response) => {
         setProfileDetails(response.data);
+        handleGetUserDetails(response.data);
         console.log(response.data);
       });
     }
@@ -107,19 +108,6 @@ export default function TopHeader({ HeaderMessage }) {
           </div>
         </div>
       </header>
-
-      {/* Breadcrumbs */}
-      <div className="bg-white border-b border-gray-200 px-6 py-2">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center space-x-2 text-sm text-gray-500">
-            <span className="hover:text-blue-600 cursor-pointer">Dashboard</span>
-            <span>›</span>
-            <span className="hover:text-blue-600 cursor-pointer">Analytics</span>
-            <span>›</span>
-            <span className="text-blue-600 font-medium">Job Trends</span>
-          </div>
-        </div>
-      </div>
     </>
   );
 }

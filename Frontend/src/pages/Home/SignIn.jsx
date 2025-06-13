@@ -20,7 +20,7 @@ export default function SignIn() {
       console.log('Hello');
       const response = await authService.login(email, password);
       console.log(response);
-      navigate('/jobTrends');
+      navigate('/dashboard');
       window.location.reload();
     } catch (err) {
       console.log('Hello', JSON.stringify(err.error));
@@ -67,8 +67,8 @@ export default function SignIn() {
                       <input
                         required={true}
                         type="email"
-                        name="email"
-                        id="email"
+                        name="signinemail"
+                        id="signinemail"
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter email to get started"
                         className="block w-full p-4 text-black placeholder-gray-500 transition-all duration-200 border border-gray-200 rounded-md bg-gray-50 focus:outline-none focus:border-blue-600 focus:bg-white caret-blue-600"
@@ -88,9 +88,9 @@ export default function SignIn() {
                     <div className="mt-2.5">
                       <input
                         type="password"
-                        name="password"
+                        name="signinpassword"
                         onChange={(e) => setPassword(e.target.value)}
-                        id="password"
+                        id="signinpassword"
                         placeholder="Enter your password"
                         className="block w-full p-4 text-black placeholder-gray-500 transition-all duration-200 border border-gray-200 rounded-md bg-gray-50 focus:outline-none focus:border-blue-600 focus:bg-white caret-blue-600"
                       />

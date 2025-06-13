@@ -5,6 +5,7 @@ package com.NoIdea.Lexora.controller.UserController;
 import com.NoIdea.Lexora.model.User.UserEntity;
 import com.NoIdea.Lexora.service.User.UserEntityService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,9 +28,23 @@ public class UserEntityProfessionalDetailsController {
         return ResponseEntity.status(HttpStatus.OK).body(professionalUser);
     }
 
-    @PostMapping("/verify/{id}")
-    public ResponseEntity<String> createVerificationRequest(@RequestBody MultipartFile certificate,@PathVariable Long id) throws IOException {
-        String verificationRequest = userEntityService.createVerificationRequest(id,certificate);
-        return ResponseEntity.status(HttpStatus.OK).body(verificationRequest);
+    @PostMapping(value = "/certificateUpload/{id}")
+    public ResponseEntity<String> createVerificationRequest(
+            @RequestParam("certificate") MultipartFile certificate,
+            @PathVariable Long id) {
+
+        try {
+            UserEntity userEntity = userEntityService.findUserById(id);
+            userEntity.setDegree_certificate(certificate.getBytes());
+
+            String verificationRequest = userEntityService.createVerificationRequest(userEntity);
+            return ResponseEntity.status(HttpStatus.OK).body(verificationRequest);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("IO Error: Failed to read certificate file");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to update the degree certificate");
+        }
     }
+
 }

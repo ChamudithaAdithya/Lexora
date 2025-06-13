@@ -1,10 +1,8 @@
 import axios from 'axios';
-
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import * as pdfjs from 'pdfjs-dist/build/pdf';
-import { Pencil, X, Eye } from 'lucide-react';
+import { X, Eye } from "lucide-react";
 
 const MentorAIChat = ({ jobs }) => {
   const [messages, setMessages] = useState([
@@ -23,20 +21,21 @@ const MentorAIChat = ({ jobs }) => {
   const messagesEndRef = useRef(null);
   const chatSessionRef = useRef(null);
   const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate('/savedPersonas');
-  };
+
+  const userDetails = JSON.parse(localStorage.getItem('user'));
+  const userId = userDetails?.user_id;
 
   useEffect(() => {
     const initializeChat = async () => {
       try {
-        const apiKey = 'AIzaSyCQUQ9sYtjSjasfpps4bK00hUkqdMwSDV0';
+        const apiKey = "AIzaSyCQUQ9sYtjSjasfpps4bK00hUkqdMwSDV0";
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
-          model: 'gemini-2.0-flash-exp-image-generation',
+          model: "gemini-2.0-flash-exp-image-generation",
           systemInstruction:
-            'You are the career guidance AI. Your job is career persona matching. Respond with a table having 4 columns: No., Career Persona, Matching %, and Suggestions to Improve.importante',
+            "You are the career guidance AI. Your job is career persona matching. Respond with a table having 4 columns: No., Career Persona, Matching %, and Suggestions to Improve.importante",
         });
+
         chatSessionRef.current = model.startChat({
           generationConfig: { temperature: 0.7, topP: 0.9, maxOutputTokens: 1024 },
           history: [],
@@ -45,6 +44,7 @@ const MentorAIChat = ({ jobs }) => {
         console.error('Error initializing chat:', error);
       }
     };
+
     initializeChat();
   }, []);
 
@@ -53,21 +53,23 @@ const MentorAIChat = ({ jobs }) => {
   }, [messages]);
 
   const parseTableResponse = (response) => {
-    const rows = response.split('\n').filter((row) => row.trim() !== '');
+    const rows = response.split("\n").filter(row => row.trim() !== "");
     if (rows.length < 3) return [];
-    return rows.slice(2).map((row) => {
-      const cells = row
-        .split('|')
-        .map((cell) => cell.trim())
-        .filter((cell) => cell !== '');
-      return { No: cells[0], CareerPersona: cells[1], MatchingPercentage: cells[2], Suggestions: cells[3] };
+    return rows.slice(2).map(row => {
+      const cells = row.split("|").map(cell => cell.trim()).filter(cell => cell !== "");
+      return {
+        No: cells[0],
+        CareerPersona: cells[1],
+        MatchingPercentage: cells[2],
+        Suggestions: cells[3],
+      };
     });
   };
 
   const handleSendMessage = async (message) => {
     if (!message.trim()) return;
     const userMessage = { role: 'user', content: message.trim() };
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsLoading(true);
 
@@ -77,7 +79,7 @@ const MentorAIChat = ({ jobs }) => {
         const aiResponse = await result.response.text();
         const parsedTableData = parseTableResponse(aiResponse);
         setTableData(parsedTableData);
-        setMessages((prev) => [...prev, { role: 'assistant', content: aiResponse }]);
+        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
       }
     } catch (error) {
       console.error('Error sending message:', error);
@@ -86,25 +88,36 @@ const MentorAIChat = ({ jobs }) => {
     }
   };
 
-  // Trigger sending the message when jobs change
   useEffect(() => {
     if (jobs) handleSendMessage(jobs);
   }, [jobs]);
 
   const sendDataToBackend = async () => {
-    try {
-      const formattedData = tableData
-        .filter((row) => row.CareerPersona != null)
-        .map((row, index) => ({
-          no: index,
-          persona: row.CareerPersona,
-          matchPrecentage: row.MatchingPercentage,
-          suggestion: row.Suggestions,
-        }));
+    const formattedData = tableData
+      .filter(row => row.CareerPersona != null)
+      .map((row, index) => ({
+        no: index,
+        persona: row.CareerPersona,
+        matchPrecentage: row.MatchingPercentage,
+        suggestion: row.Suggestions,
+      }));
 
-      await axios.post('http://localhost:8080/api/v1/persona', formattedData);
+    if (formattedData.length === 0) {
+      alert("No data to save.");
+      return;
+    }
+
+    try {
+      // Delete existing personas for the user
+      await axios.delete(`http://localhost:8080/api/v1/persona/user/${userId}`);
+
+      // Save new personas
+      await axios.post(`http://localhost:8080/api/v1/persona/user/${userId}`, formattedData, {
+        headers: { 'Content-Type': 'application/json' },
+      });
 
       alert('Data sent successfully!');
+      navigate("/savedPersonas");
     } catch (error) {
       console.error('Error sending data:', error);
       alert('Failed to send data');
@@ -124,66 +137,37 @@ const MentorAIChat = ({ jobs }) => {
           <thead className="bg-blue-50">
             <tr>
               <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">No.</th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">
-                Career Persona
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">
-                Matching %
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">
-                Suggestions
-              </th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Career Persona</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Matching %</th>
+              <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Suggestions</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-blue-100">
-            {tableData.length > 0 ? (
-              tableData
-                .filter((row) => row.CareerPersona !== '---' && parseFloat(row.MatchingPercentage) <= 1000)
-                .map((row, index) => (
-                  <tr
-                    key={index}
-                    className={`hover:bg-blue-50 transition-colors duration-150 ${
-                      index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'
-                    }`}
-                  >
-                    <td
-                      className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-                      style={{
-                        width: '20px',
-                        textAlign: 'center',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
-                      }}
+            {tableData.length > 0 ? tableData
+              .filter(row => row.CareerPersona !== "---" && parseFloat(row.MatchingPercentage) <= 1000)
+              .map((row, index) => (
+                <tr key={index} className={`hover:bg-blue-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'}`}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 text-center">{index + 1}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">{row.CareerPersona}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-800">{row.MatchingPercentage}</td>
+                  <td className="px-6 py-4 text-sm text-gray-600">
+                    <button
+                      onClick={() => handleViewSuggestion(row.Suggestions, row.CareerPersona)}
+                      className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded flex items-center gap-1"
                     >
-                      {index + 1}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">{row.CareerPersona}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-800">
-                      {row.MatchingPercentage}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      <button
-                        onClick={() => handleViewSuggestion(row.Suggestions, row.CareerPersona)}
-                        className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded flex items-center gap-1"
-                      >
-                        <Eye size={16} /> View
-                      </button>
-                    </td>
-                  </tr>
-                ))
-            ) : (
-              <tr>
-                <td colSpan="4" className="px-6 py-4 text-center text-blue-800 font-medium">
-                  No career personas found.
-                </td>
-              </tr>
-            )}
+                      <Eye size={16} /> View
+                    </button>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan="4" className="px-6 py-4 text-center text-blue-800 font-medium">No career personas found.</td>
+                </tr>
+              )}
           </tbody>
         </table>
       </div>
 
-      {/* Popup for suggestions */}
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
@@ -208,35 +192,9 @@ const MentorAIChat = ({ jobs }) => {
         </div>
       )}
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSendMessage(inputMessage);
-        }}
-        className="flex gap-2 mt-4"
-      >
-        <input
-          type="text"
-          value={inputMessage}
-          onChange={(e) => setInputMessage(e.target.value)}
-          placeholder="Ask about career guidance..."
-          className="hidden flex-grow p-2 border rounded-md"
-        />
-        <button
-          type="submit"
-          className="hidden bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          disabled={isLoading}
-        >
-          {isLoading ? 'Loading...' : 'See Result'}
-        </button>
-      </form>
-
       <button
-        className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
-        onClick={() => {
-          sendDataToBackend();
-          handleNavigate();
-        }}
+        className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-medium shadow-md transition-colors"
+        onClick={sendDataToBackend}
       >
         Save
       </button>

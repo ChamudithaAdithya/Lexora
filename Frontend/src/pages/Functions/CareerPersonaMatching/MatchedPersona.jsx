@@ -3,14 +3,10 @@ import { Upload, X, FileText, AlertTriangle } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import SidebarSub from '../../../component/template/SidebarSub';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import TopHeader from '../../../component/template/TopHeader';
 
 export default function PersonaMatcherPage() {
-  const [jobs, setJobs] = useState([
-    { id: 1, title: 'Frontend Developer', skill: 'React, JavaScript, HTML/CSS', progress: 75 },
-    { id: 2, title: 'Backend Developer', skill: 'Node.js, Express, MongoDB', progress: 60 },
-    { id: 3, title: 'UX Designer', skill: 'Figma, User Research, Wireframing', progress: 85 },
-    { id: 4, title: 'DevOps Engineer', skill: 'Docker, Kubernetes, CI/CD', progress: 10 },
-  ]);
+  
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -354,24 +350,11 @@ export default function PersonaMatcherPage() {
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      <SidebarSub />
+    <div className="flex overflow-hidden">
+          <SidebarSub />
+          <div className="flex-1 flex flex-col overflow-hidden">
+            <TopHeader HeaderMessage={'Persona Matcher'} />
 
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-800">Persona Matcher</h1>
-            <p className="text-sm text-gray-500">My Persona's</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium mr-2">
-                JS
-              </div>
-              <span className="text-sm font-medium text-gray-700">John Smith</span>
-            </div>
-          </div>
-        </header>
 
         <main className="p-6 flex-1 overflow-y-auto bg-white">
           {alertMessage && (

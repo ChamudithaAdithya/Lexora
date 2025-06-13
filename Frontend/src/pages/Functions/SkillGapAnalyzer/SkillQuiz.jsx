@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SidebarSub from '../../../component/template/SidebarSub';
 import TopHeader from '../../../component/template/Quiztop';
@@ -7,10 +7,15 @@ import TopHeader from '../../../component/template/Quiztop';
 export default function SkillQuizPage() {
   const { jobRoleId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Get the selected skill from location state
+  const selectedSkillName = location.state?.selectedSkillName || '';
+  const selectedSkillId = location.state?.selectedSkillId || null;
 
   const [skillLists, setSkillLists] = useState([]);
   const [jobRoleName, setJobRoleName] = useState('');
-  const [skillName, setSkillName] = useState(''); // Single skill name since all are the same
+  const [skillName, setSkillName] = useState(selectedSkillName); // Use the passed skill name
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -33,13 +38,18 @@ export default function SkillQuizPage() {
           setSkillLists(data.skillLists);
           setJobRoleName(data.jobRoleName || 'Unknown Role');
           
-          // Just use the first skill name since all are the same
-          if (data.skillLists.length > 0) {
+          // If no skill was selected on the previous page, use the first one
+          if (!selectedSkillName && data.skillLists.length > 0) {
             setSkillName(data.skillLists[0].skillName || '');
           }
 
           const questions = [];
           data.skillLists.forEach(skill => {
+            // If a skill ID was passed, only include questions from that skill
+            if (selectedSkillId && skill.skillId !== selectedSkillId) {
+              return;
+            }
+            
             if (skill.skillQuestions && skill.skillQuestions.length > 0) {
               skill.skillQuestions.forEach(question => {
                 if (question.skillAnswers && question.skillAnswers.length > 0) {
@@ -66,7 +76,7 @@ export default function SkillQuizPage() {
     };
 
     fetchJobRoleData();
-  }, [jobRoleId]);
+  }, [jobRoleId, selectedSkillId, selectedSkillName]);
 
   const handleAnswerSelect = (option, answerId) => {
     setSelectedAnswer({ text: option, id: answerId });
@@ -129,8 +139,8 @@ export default function SkillQuizPage() {
           totalQuestions,
           jobRoleName,
           wrongQuestions: updatedWrongQuestions,
-          skillName, // Send just the single skill name
-          groupedWrongQuestions, // Send grouped wrong questions for better display
+          skillName: skillName || (currentQuestion?.skillName || ''), // Use either the passed skill name or the one from the current question
+          groupedWrongQuestions,
         }
       });
     }
@@ -146,7 +156,7 @@ export default function SkillQuizPage() {
         <div className="flex-1 overflow-y-auto p-6 bg-white">
           <div className="border-b-2 border-solid border-gray-300 mb-6">
             <h1 className="text-2xl font-bold text-gray-800">
-              {jobRoleName} Quiz
+              {jobRoleName} Quiz - {skillName}
             </h1>
           </div>
 
@@ -229,27 +239,11 @@ export default function SkillQuizPage() {
                     {currentQuestionIndex >= allQuestions.length - 1 ? 'Finish' : 'Next'}
                   </button>
                 </div>
-
-                {/* Hide wrong questions in production, only show for debugging */}
-                {/* {wrongQuestions.length > 0 && (
-                  <div className="mt-6">
-                    <h3 className="text-lg font-semibold text-red-600 mb-2">Incorrectly Answered Questions</h3>
-                    <ul className="space-y-2">
-                      {wrongQuestions.map((item, index) => (
-                        <li key={index} className="bg-red-50 p-3 rounded-md border border-red-200">
-                          <p className="font-medium text-gray-800">Q: {item.question}</p>
-                          <p className="text-sm text-green-600">Correct answer: {item.correctAnswer}</p>
-                          <p className="text-xs text-gray-500">Skill: {item.skillName}</p>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )} */}
               </>
             ) : (
               <div className="text-gray-500 text-center">
                 {skillLists.length > 0
-                  ? "No questions available for this job role."
+                  ? "No questions available for this job role or skill."
                   : "No skills found for this job role."}
               </div>
             )}

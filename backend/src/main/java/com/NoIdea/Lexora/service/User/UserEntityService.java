@@ -19,7 +19,7 @@ public interface UserEntityService {
 
     public String updateProfessionalDetails(UserEntity userEntity,Long id);
 
-    public String createVerificationRequest(Long id, MultipartFile certificate) throws IOException;
+    public String createVerificationRequest(UserEntity userEntity) throws IOException;
 
     public UserProfileResponseDTO findUserProfileById(Long id);
 }

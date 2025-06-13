@@ -1,6 +1,5 @@
 package com.NoIdea.Lexora.config;
 
-
 import com.NoIdea.Lexora.filter.JWTFilter;
 import com.NoIdea.Lexora.repository.User.UserEntityRepository;
 import com.NoIdea.Lexora.service.Auth.MyUserDetailsService;
@@ -31,7 +30,8 @@ public class SecurityConfig {
 
     private final JWTFilter jwtFilter;
 
-    public SecurityConfig(UserEntityRepository userRepository, UserEntityRepository userRepository1, JWTFilter jwtFilter) {
+    public SecurityConfig(UserEntityRepository userRepository, UserEntityRepository userRepository1,
+            JWTFilter jwtFilter) {
         this.userRepository = userRepository1;
         this.jwtFilter = jwtFilter;
     }
@@ -42,7 +42,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(c -> c.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a.requestMatchers("/login","/api/v1/auth/login","/api/v1/auth/register")
+                .authorizeHttpRequests(a -> a.requestMatchers("/login", "/api/v1/auth/login", "/api/v1/auth/register")
                         .permitAll().anyRequest()
                         .authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Vite default port
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://localhost:5173","https://192.168.1.2:5173","*")); // Vite default port
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
         configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
@@ -64,20 +64,20 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider(){
+    public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setUserDetailsService(userDetails() );
+        provider.setUserDetailsService(userDetails());
         return provider;
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);
     }
 
     @Bean
-    public MyUserDetailsService userDetails(){
+    public MyUserDetailsService userDetails() {
         return new MyUserDetailsService(userRepository);
     }
 

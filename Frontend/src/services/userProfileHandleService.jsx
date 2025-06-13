@@ -66,8 +66,27 @@ class ProfileSettings {
     return axios.post(`${professionalDetailsControllerAPI}${user_id}`, profileDetails);
   }
 
-  requestVerifyAccount(degree_certificate, user_id) {
-    return axios.post(`${professionalDetailsControllerAPI}verify/${user_id}`, degree_certificate);
+  UploadDegreeCirtificate(degree_certificate, userDetails) {
+    const formData = new FormData();
+    formData.append('certificate', degree_certificate);
+    return axios.post(`${professionalDetailsControllerAPI}certificateUpload/${userDetails.user_id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${userDetails.token}`,
+      },
+    });
+  }
+
+  getAllVerificationRequests() {
+    return axios.get('http://www.localhost:8080/api/v2/request/all');
+  }
+
+  ResponseVerificationRequest(requestId, response) {
+    return axios.put(`http://www.localhost:8080/api/v2/request/${requestId}/${response}`);
+  }
+
+  sendBecomeAMentorRequest(user_id) {
+    return axios.post(`http://www.localhost:8080/api/v2/request/${user_id}`);
   }
 }
 

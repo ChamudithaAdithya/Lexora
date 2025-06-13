@@ -45,10 +45,6 @@ const categories = [
 ];
 
 export default function SidebarSub() {
-  const [selectedCategory, setSelectedCategory] = useState('Software Development & Engineering');
-  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
-  const [selectedYear, setSelectedYear] = useState('2025');
-  const [showYearDropdown, setShowYearDropdown] = useState(false);
   const location = useLocation();
 
   const isLocation = location.pathname;
@@ -62,10 +58,13 @@ export default function SidebarSub() {
     <>
       <div className="h-screen flex-shrink-0">
         <Sidebar>
-          <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" />
+          <Link to={'/dashboard'}>
+            <SidebarItem icon={<LayoutDashboard size={20} />} text="Dashboard" />
+          </Link>
 
           <hr className="my-3 border-gray-200" />
 
+          {/*Roadmap */}
           <SidebarItem
             icon={<Route size={20} />}
             text="Roadmaps"
@@ -76,7 +75,7 @@ export default function SidebarSub() {
             }
           >
             <Link to="/searchRoadmap">
-              <SidebarSubItem text="Roadmaps Generator" active={isLocation == '/searchRoadmap'} />
+              <SidebarSubItem id="searchRoadmap" text="Roadmaps Generator" active={isLocation == '/searchRoadmap'} />
             </Link>
             <Link to="/RoadmapDetails">
               <SidebarSubItem text="Roadmap Details" active={isLocation == '/RoadmapDetails'} />
@@ -97,19 +96,19 @@ export default function SidebarSub() {
 
           <SidebarItem
             icon={<BarChart4Icon size={20} />}
-            text="Industry Insights"
+            text="IndustryInsights"
             alwaysOpen={
               isLocation == '/jobTrends' || isLocation == '/salaryTrends' || isLocation == '/skillTrends' ? true : false
             }
           >
             <Link to="/jobTrends">
-              <SidebarSubItem text="Job Trends" active={isLocation == '/jobTrends' ? true : false} />
+              <SidebarSubItem text="JobTrends" active={isLocation == '/jobTrends' ? true : false} />
             </Link>
             <Link to="/skillTrends">
-              <SidebarSubItem text="Skill Trends" active={isLocation == '/skillTrends' ? true : false} />
+              <SidebarSubItem text="SkillTrends" active={isLocation == '/skillTrends' ? true : false} />
             </Link>
             <Link to="/salaryTrends">
-              <SidebarSubItem text="Salary Trends" active={isLocation == '/salaryTrends' ? true : false} />
+              <SidebarSubItem text="SalaryTrends" active={isLocation == '/salaryTrends' ? true : false} />
             </Link>
           </SidebarItem>
 
@@ -126,8 +125,12 @@ export default function SidebarSub() {
             }
             text="Skill Gap Analyzer"
           >
-            <SidebarSubItem text="Anlyzer" />
-            <SidebarSubItem text="Completed" />
+            <Link to="/sk">
+              <SidebarSubItem text="Analyzer" active={isLocation == '/sk' ? true : false} />
+            </Link>
+            <Link to="/sk4">
+              <SidebarSubItem text=" Complted" active={isLocation == '/sk4' ? true : false} />
+            </Link>
           </SidebarItem>
 
           <SidebarItem
@@ -147,7 +150,10 @@ export default function SidebarSub() {
               <SidebarSubItem text="persona" active={isLocation == '/persona' ? true : false} />
             </Link>
             <Link to="/MatchedPersonas">
-              <SidebarSubItem text="Matched Personas" active={isLocation == '/MatchedPersonas' ? true : false} />
+              <SidebarSubItem
+                text="Matched Personas"
+                active={isLocation == '/MatchedPersonas' || isLocation ? true : false}
+              />
             </Link>
           </SidebarItem>
 
@@ -155,7 +161,11 @@ export default function SidebarSub() {
 
           <SidebarItem icon={<Bell size={20} />} text="Notifications" alert />
 
-          <SidebarItem icon={<User size={20} />} text="Mentor" alwaysOpen={isLocation}>
+          <SidebarItem
+            icon={<User size={20} />}
+            text="Mentor"
+            alwaysOpen={isLocation == '/mentorDashboard' ? true : false}
+          >
             <Link to={'/mentorDashboard'}>
               <SidebarSubItem text="Dashboard" active={isLocation == '/mentorDashboard'} />
             </Link>
@@ -164,10 +174,21 @@ export default function SidebarSub() {
             </Link>
           </SidebarItem>
 
-          <SidebarItem icon={<FileCog size={20} />} text="Admin">
-            <SidebarSubItem text="Mentor Varification" />
-            <SidebarSubItem text="Feedback" />
-          </SidebarItem>
+          <Link to={'/Admin/MentorRequests'}>
+            <SidebarItem
+              icon={<FileCog size={20} />}
+              text="Admin"
+              alwaysOpen={isLocation == '/Admin/MentorRequests' || isLocation == '/Admin/Feedback' ? true : false}
+            >
+              <Link to={'/Admin/MentorRequests'}>
+                <SidebarSubItem text="Mentor Varification" active={isLocation == '/Admin/MentorRequests'} />
+              </Link>
+              <Link to={'/Admin/Feedback'}>
+                <SidebarSubItem text="Feedback" active={isLocation == '/Admin/Feedback'} />
+              </Link>
+            </SidebarItem>
+          </Link>
+
           <Link to={'/settings/profile'}>
             <SidebarItem icon={<Settings size={20} />} text="Settings" alwaysOpen={true}>
               <Link to={'/settings/profile'}>

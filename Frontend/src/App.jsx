@@ -12,6 +12,7 @@ import TeamPage from './pages/Home/TeamPage';
 import RoadmapDetailsPage from './pages/Functions/Roadmap/RoadmapDetailsPage';
 import Persona from './pages/Functions/CareerPersonaMatching/PersonaMatcher';
 import Persona1 from './pages/Functions/CareerPersonaMatching/MatchedPersona';
+import FetchPersona from './pages/Functions/CareerPersonaMatching/person';
 import RoadmapGeminiApi from './component/Roadmaps/RoadmapGeminiApi';
 import HomePage from '../src/pages/Home/HomePage';
 
@@ -43,6 +44,14 @@ import MenteeAddMatchingCriteria from './pages/Functions/MentorMenteeMatchmaking
 import MenteeMatchmaking from './pages/Functions/MentorMenteeMatchmaking/MenteeMatchmaking';
 import AboutUsPage from './pages/Home/AboutUsPage';
 
+import AdminMentorRequests from './pages/Home/Admin/AdminMentorRequests';
+import AppsPage from './pages/Home/AppsPage';
+import Dashboard from './pages/Dashboard';
+import MentorDashboardNew from './pages/Functions/MentorMenteeMatchmaking/MentorDashboardNew';
+import JoinMeetingPage from './pages/Functions/MentorMenteeMatchmaking/JoinMeetingPage';
+import CreateMeetingPage from './pages/Functions/MentorMenteeMatchmaking/CreateMeetingPage';
+import MeetingsListPage from './pages/Functions/MentorMenteeMatchmaking/Mentor/MeetingsListPage';
+
 function App() {
   return (
     <>
@@ -57,20 +66,26 @@ function App() {
           <Route path="/team" element={<TeamPage />} />
           <Route path="/" element={<HomePage />} />
           <Route path="/aboutus" element={<AboutUsPage />} />
+          <Route path="/app" element={<AppsPage />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
           {/* <Route path="/PersonaMatching" element={<CareerPersosna />} />
           <Route path="/Personas" element={<MatchedPersosna />} />
           <Route path="/persona" element={<Persona />} /> */}
           <Route path="/rgapi" element={<RoadmapGeminiApi />} />
           {/* <Route path="/ro" element={<RoadmapOption />} /> */}
-          <Route path="/sk" element={<Skill />} />
-          <Route path="/sk1/:jobRoleId" element={<Skill1 />} />
-          <Route path="/sk2" element={<Skill2 />} />
-          <Route path="/sk3" element={<Skill3 />} />
-          <Route path="/sk4" element={<Skill5 />} />
-          
-            <Route path="/skills/:jobRoleId" element={<Skill4/>} />
-          <Route path="/result/:jobRole" element={<Skill6/>} />
+
+          <Route path="/skills/:jobRoleId" element={<Skill4 />} />
+          <Route path="/result/:jobRole" element={<Skill6 />} />
+
+          {/* Mentor Mentee Matchmaking New */}
+          <Route path="/mentorDashboardNew" element={<MentorDashboardNew />} />
+          <Route path="/teams" element={<CreateMeetingPage />} />
+          <Route path="/join-meeting" element={<JoinMeetingPage />} />
+          <Route path="/create-meeting" element={<CreateMeetingPage />} />
+          <Route path="/edit-meeting/:meetingId" element={<CreateMeetingPage title={"Edit Meeting"} />} />
+          <Route path="/meetingsList" element={<MeetingsListPage />} />
+          <Route path="join-meeting/:meetingId" element={<JoinMeetingPage />} />
 
 
           <Route element={<ProtectedRoute />}>
@@ -85,8 +100,9 @@ function App() {
             <Route path="/salaryTrends" element={<SalaryTrendsPage />} />
             <Route path="/skillTrends" element={<SkillTrendsPage />} />
             <Route path="/personas" element={<Persona />} />
-            <Route path="/persona" element={<Persona1 />} />
 
+            <Route path="/persona" element={<Persona1 />} />
+            <Route path="/savedPersonas" element={<FetchPersona />} />
 
             {/* Personolized Roadmap Generator  */}
             <Route path="/roadmap" element={<RoadmapPage />} />
@@ -102,6 +118,16 @@ function App() {
             <Route path="/menteeAddMatchingCriteria" element={<MenteeAddMatchingCriteria />} />
             <Route path="/menteeMatchmaking" element={<MenteeMatchmaking />} />
             {/* <Route path="/bookSession" element={<BookSession />} /> */}
+
+            {/* Skill Gap Analyzer */}
+            <Route path="/sk" element={<Skill />} />
+            <Route path="/sk1/:jobRoleId" element={<Skill1 />} />
+            <Route path="/sk2" element={<Skill2 />} />
+            <Route path="/sk3" element={<Skill3 />} />
+            <Route path="/sk4" element={<Skill5 />} />
+
+            {/* Admin */}
+            <Route path="/Admin/MentorRequests" element={<AdminMentorRequests />} />
           </Route>
         </Routes>
       </BrowserRouter>

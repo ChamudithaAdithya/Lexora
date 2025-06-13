@@ -1,5 +1,7 @@
 package com.NoIdea.Lexora.model.SkillGapModel;
 
+import com.NoIdea.Lexora.model.User.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,4 +32,9 @@ public class SkillScore {
 
     @ElementCollection
     private List<String> courseLinks;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 }

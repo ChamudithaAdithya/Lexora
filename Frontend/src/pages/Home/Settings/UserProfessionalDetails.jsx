@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import {
+  BellIcon,
+  ChevronDown,
+  File,
+  GitPullRequestArrow,
+  LucideGitPullRequestDraft,
+  ReceiptPoundSterling,
+  X,
+} from 'lucide-react';
 import SidebarSub from '../../../component/template/SidebarSub';
 import TopHeader from '../../../component/template/TopHeader';
 import userProfileHandleService from '../../../services/userProfileHandleService';
 import { Link } from 'react-router-dom';
 import Alert from '../../../component/template/alert/Alert';
+import axios from 'axios';
 
 export default function UserProfessionalDetails() {
+  const [showPdfModal, setShowPdfModal] = useState(false);
   const [activeTab, setActiveTab] = useState('professional Details');
   const tabs = {
     Profile: '/settings/profile',
@@ -14,7 +24,7 @@ export default function UserProfessionalDetails() {
     'professional Details': '/settings/professionalDetails',
   };
 
-   const userDetails = JSON.parse(localStorage.getItem('user'));
+  const userDetails = JSON.parse(localStorage.getItem('user'));
   const [profileDetails, setProfileDetails] = useState({
     occupation: '',
     company: '',
@@ -29,7 +39,7 @@ export default function UserProfessionalDetails() {
   const [alertType, setAlertType] = useState('');
 
   useEffect(() => {
-    userProfileHandleService.findUserProfileById(1).then((response) => {
+    userProfileHandleService.findUserProfileById(userDetails.user_id).then((response) => {
       const userData = response.data || {};
       setProfileDetails({
         occupation: userData.occupation || '',
@@ -39,14 +49,14 @@ export default function UserProfessionalDetails() {
         v_status: userData.v_status || '',
         degree_certificate: userData.degree_certificate || '',
       });
-      console.log(response.data);
     });
-  }, []);
+  }, [profileDetails.career]);
 
   const handleVerificationDetails = (e) => {
     const file = e.target.files[0];
     if (file) {
       setDegree_certificate(file);
+      console.log('This is the files', file);
     }
   };
 
@@ -55,7 +65,7 @@ export default function UserProfessionalDetails() {
     setAlertMessage('');
 
     try {
-      await userProfileHandleService.requestVerifyAccount(degree_certificate).then((response) => {
+      await userProfileHandleService.UploadDegreeCirtificate(degree_certificate, userDetails).then((response) => {
         console.log(response);
         if (response.status == 200) {
           setAlertMessage(response.data);
@@ -81,6 +91,32 @@ export default function UserProfessionalDetails() {
     });
   };
 
+  const handleOpenPdf = () => {
+    setShowPdfModal(true);
+  };
+
+  const handleSendRequest = async () => {
+    setAlertMessage('');
+    setAlertType('');
+    if (profileDetails.degree_certificate != null) {
+      try {
+        const response = await userProfileHandleService.sendBecomeAMentorRequest(userDetails.user_id);
+        if (response.status === 200 || response.status === 201) {
+          setAlertMessage(response.data);
+          setAlertType('success');
+        }
+        console.log('Response data:', response.data);
+      } catch (error) {
+        console.error('Error sending request:', error);
+        setAlertMessage(error.response?.data || 'Please Check Your Internet Connection');
+        setAlertType('error');
+      }
+    } else {
+      alertMessage('Please Upload Your Degree Cirtificate. It is Mendotory');
+      alertType('error');
+    }
+  };
+
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     setAlertMessage('');
@@ -92,7 +128,7 @@ export default function UserProfessionalDetails() {
 
     if (confirmed) {
       try {
-        const response = await userProfileHandleService.updateProfessionalDetails(updatedDetails,userDetails.user_id);
+        const response = await userProfileHandleService.updateProfessionalDetails(updatedDetails, userDetails.user_id);
         if (response.status === 200) {
           setAlertMessage('Profile updated successfully');
           setAlertType('success');
@@ -142,7 +178,15 @@ export default function UserProfessionalDetails() {
               <div className="mb-6 ">
                 <div className="flex flex-row object-center items-center mb-2">
                   <h2 className="text-lg font-medium mr-2">Professional Details</h2>
-                  <p className="text-sm text-red-600">* Not verified</p>
+                  {profileDetails.v_status != 'ACCEPTED' ? (
+                    <>
+                      <p className="px-2 py-1 text-xs rounded-full bg-red-100 text-red-600">* Not verified</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-600">Verified</p>
+                    </>
+                  )}
                 </div>
                 <p className="text-gray-500 text-sm">
                   It is important to Update your professional details to get verified as a mentor
@@ -265,16 +309,68 @@ export default function UserProfessionalDetails() {
                           type="submit"
                           className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
                         >
-                          Send Request
+                          Upload New Cirtificate
                         </button>
                       </div>
+                      {profileDetails.degree_certificate && (
+                        <>
+                          <div className="flex space-x-3">
+                            <button
+                              onClick={handleOpenPdf}
+                              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                            >
+                              <File className="h-4 w-4 mr-2" />
+                              View Exist
+                            </button>
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 </form>
+                {(profileDetails.v_status == 'REJECTED' ||
+                  profileDetails.degree_certificate != null ||
+                  profileDetails.v_status != 'ACCEPTED') && (
+                  <div>
+                    <button
+                      onClick={handleSendRequest}
+                      type="button"
+                      className="bg-blue-500 text-white px-8 py-2 rounded-md text-sm font-medium hover:bg-blue-700"
+                    >
+                      <p className="flex align-middle justify-center">
+                        <GitPullRequestArrow className="h-4 w-4 mr-2" />
+                        Become a Mentor
+                      </p>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
+        {/* PDF Modal */}
+        {showPdfModal && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-75 overflow-y-auto h-full w-full z-60">
+            <div className="relative top-4 mx-auto p-5 border w-11/12 max-w-6xl shadow-lg rounded-md bg-white min-h-[90vh]">
+              <div className="flex justify-end items-center mb-4">
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={() => setShowPdfModal(false)}
+                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X className="h-6 w-6" />
+                  </button>
+                </div>
+              </div>
+              <div className="h-full">
+                <iframe
+                  src={`${profileDetails.degree_certificate}`}
+                  className="w-full h-[80vh] border border-gray-300 rounded"
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
