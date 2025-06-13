@@ -1,5 +1,7 @@
 package com.NoIdea.Lexora.model.PersonaMatchingModel;
 
+import com.NoIdea.Lexora.model.User.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,4 +21,8 @@ public class PersonaMatchingModel {
     private String matchPrecentage;
     @Lob
     private String suggestion;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private UserEntity userEntity;
 }

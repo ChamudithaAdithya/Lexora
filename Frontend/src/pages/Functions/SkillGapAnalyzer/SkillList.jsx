@@ -30,6 +30,16 @@ export default function SkillListPage() {
     fetchSkills();
   }, [jobRoleId]);
 
+  // Handle skill selection
+  const handleSkillSelect = (skill) => {
+    navigate(`/sk1/${jobRoleId}`, {
+      state: {
+        selectedSkillName: skill.skillName,
+        selectedSkillId: skill.skillId
+      }
+    });
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
@@ -73,8 +83,8 @@ export default function SkillListPage() {
               {skills.map((skill) => (
                 <li
                   key={skill.skillId}
-                  onClick={() => navigate(`/sk1/${jobRoleId}`)}
-                  className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow hover:shadow-md transition-shadow duration-300"
+                  onClick={() => handleSkillSelect(skill)}
+                  className="bg-blue-50 border border-blue-200 rounded-lg p-4 shadow hover:shadow-md transition-shadow duration-300 cursor-pointer"
                 >
                   <span className="font-medium text-gray-800">{skill.skillName}</span>
                 </li>

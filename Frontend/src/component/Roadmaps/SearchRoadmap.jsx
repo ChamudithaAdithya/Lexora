@@ -17,6 +17,19 @@ const SearchRoadmap = () => {
   const [user, setUser] = useState(null);
   const [Rid, setRid] = useState(1);
 
+  const [progressData, setProgressData] = useState({
+    overall: 0,
+    completedItems: { mainNodes: [], subCategories: [], steps: [] },
+    totalItems: { mainNodes: 0, subCategories: 0, steps: 0 }
+  });
+
+  const handleProgressChange = (newProgress) => {
+    // newProgress.overall is a number 0–100
+    // newProgress.completedItems / totalItems gives you whatever you need
+    console.log('Progress updated:', newProgress);
+    setProgressData(newProgress);
+  };
+
   useEffect(() => {
     const userDetails = localStorage.getItem('user');
     if (userDetails) {
@@ -61,6 +74,15 @@ const SearchRoadmap = () => {
       fetchAIResponse(option);
     }
   };
+
+  // Handle Roadmap Progress 
+  const [roadmapProgress, setRoadmapProgress] = useState({});
+
+const handleProgressUpdate = (updatedProgress) => {
+  setRoadmapProgress(updatedProgress);
+  console.log("THIS IS THE PROGRESS RESPONSE",updatedProgress);
+};
+
 
 
   const handleSkillSubmit = () => {
@@ -221,6 +243,125 @@ const SearchRoadmap = () => {
     }
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  // Convert to save in Backend 
+
+  // Add this function to your Roadmap component
+
+const transformProgressToBackendFormat = () => {
+  const progressData = {};
+  
+  // Iterate through all steps in the roadmap data
+  roadmapData.main_text?.forEach(mainText => {
+    mainText.sub_category?.forEach(subCategory => {
+      if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
+        subCategory.sub_steps.forEach(step => {
+          const isCompleted = completedItems.steps.includes(step.steps_id);
+          progressData[step.steps_id] = {
+            status: isCompleted ? "COMPLETED" : "NOT_STARTED",
+            notes: ""
+          };
+        });
+      }
+    });
+  });
+  
+  return progressData;
+};
+
+// Then modify your calculateProgress function:
+const calculateProgress = () => {
+  let totalSubCategories = 0;
+  let completedSubCategories = 0;
+
+  roadmapData.main_text?.forEach(mainText => {
+    mainText.sub_category?.forEach(subCategory => {
+      totalSubCategories++;
+      if (completedItems.subCategories.includes(subCategory.sub_id)) {
+        completedSubCategories++;
+      }
+    });
+  });
+
+  const totalProgress = totalSubCategories > 0 ? (completedSubCategories / totalSubCategories) * 100 : 0;
+  const roundedProgress = Math.round(totalProgress);
+  setProgress(roundedProgress);
+  
+  // Call the progress change callback with transformed data
+  if (onProgressChange) {
+    const transformedProgress = transformProgressToBackendFormat();
+    
+    onProgressChange({
+      overall: roundedProgress,
+      progress: transformedProgress,
+      // You can also include additional metadata if needed
+      metadata: {
+        totalMainNodes: roadmapData.main_text?.length || 0,
+        totalSubCategories: totalSubCategories,
+        totalSteps: getTotalStepsCount(),
+        completedSteps: completedItems.steps.length,
+        completedSubCategories: completedItems.subCategories.length,
+        completedMainNodes: completedItems.mainNodes.length
+      }
+    });
+  }
+};
+
+// Alternative: If you want to support different status types (IN_PROGRESS, etc.)
+const transformProgressToBackendFormatAdvanced = () => {
+  const progressData = {};
+  
+  roadmapData.main_text?.forEach(mainText => {
+    mainText.sub_category?.forEach(subCategory => {
+      if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
+        subCategory.sub_steps.forEach(step => {
+          const isCompleted = completedItems.steps.includes(step.steps_id);
+          
+          // You can add more sophisticated status logic here
+          let status = "NOT_STARTED";
+          if (isCompleted) {
+            status = "COMPLETED";
+          }
+          // Add more conditions for IN_PROGRESS, BLOCKED, etc. if needed
+          
+          progressData[step.steps_id] = {
+            status: status,
+            notes: "" // You can extend this to include actual notes if you track them
+          };
+        });
+      }
+    });
+  });
+  
+  return progressData;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   // Initialize progress tracking for all steps
   const initializeProgress = (roadmapJson) => {
     if (!roadmapJson || !roadmapJson.main_text) return;
@@ -290,16 +431,16 @@ const SearchRoadmap = () => {
         r_Id: Rid,
         job_name: roadmapData_json.job_name,
         userId: user.user_id,
-        mainText: roadmapData_json.main_text.map((mainItem) => ({
-          mainTextId: mainItem.main_text_id,
-          mainTextName: mainItem.main_text_name,
-          subCategory: mainItem.sub_category.map((subItem) => ({
-            subId: subItem.sub_id,
-            subName: subItem.sub_name,
-            subDescription: subItem.sub_description,
-            subSteps: subItem.sub_steps.map((step) => ({
-              stepsId: step.steps_id,
-              stepsDescription: step.steps_description,
+        main_text: roadmapData_json.main_text.map((mainItem) => ({
+          main_text_id: mainItem.main_text_id,
+          main_text_name: mainItem.main_text_name,
+          sub_category: mainItem.sub_category.map((subItem) => ({
+            sub_id: subItem.sub_id,
+            sub_name: subItem.sub_name,
+            sub_description: subItem.sub_description,
+            sub_steps: subItem.sub_steps.map((step) => ({
+              steps_id: step.steps_id,
+              steps_description: step.steps_description,
             })),
           })),
         })),
@@ -307,14 +448,15 @@ const SearchRoadmap = () => {
         progress: roadmapData_json.progress || {},
       };
 
+
       console.log('User roadmapToSave', roadmapToSave);
+      
+      roadmapData_json.progress.forEach(item => {
+        item.key
+      });
 
       // Send data to the backend 
-      const response = await axios.post('http://localhost:8080/api/roadmaps', roadmapToSave, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await axios.post('http://localhost:8080/api/roadmaps', roadmapToSave);
 
       if (response.status === 201 || response.status === 200) {
         console.log('Roadmap saved successfully:', response.data);
@@ -343,6 +485,7 @@ const SearchRoadmap = () => {
             <input
               type="text"
               placeholder="Frontend Developer"
+              id='SX4'
               className="w-96 py-2 px-4 text-base border border-gray-300 rounded-l-md focus:outline-none"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -350,6 +493,7 @@ const SearchRoadmap = () => {
             <button
               className="bg-blue-600 hover:bg-blue-700 text-white rounded-r-md py-2 px-5 text-base cursor-pointer h-full"
               onClick={handleInitialSubmit}
+              id='GenerateButton'
             >
               Generate
             </button>
@@ -368,6 +512,7 @@ const SearchRoadmap = () => {
               <div className="flex flex-col gap-4">
                 <button
                   onClick={() => handleOptionSelect(1)}
+                  id='OptionOneSelection'
                   className="p-4 text-left border border-gray-300 rounded-md bg-white hover:bg-gray-100 cursor-pointer transition-colors"
                 >
                   1. In which skill area do you want to improve for becoming a {jobRole}?
@@ -392,6 +537,7 @@ const SearchRoadmap = () => {
               <div className="mb-5">
                 <input
                   type="text"
+                  id='SkillRoadmap'
                   value={skill}
                   onChange={(e) => setSkill(e.target.value)}
                   placeholder="Example: JavaScript, Design, Database, etc."
@@ -408,6 +554,7 @@ const SearchRoadmap = () => {
                 </button>
                 <button
                   onClick={handleSkillSubmit}
+                  id='SkillGenerateRoadmap'
                   className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
                 >
                   Generate Roadmap
@@ -425,7 +572,7 @@ const SearchRoadmap = () => {
           {roadmapData && !isLoading && (
             <div className="mb-8">
               {roadmapData.jsonData ? (
-                <Roadmap jobGoal={getRoadmapTitle()} JsonRoadmapData={roadmapData.jsonData} />
+                <Roadmap jobGoal={getRoadmapTitle()} onProgressChange={handleProgressChange} JsonRoadmapData={roadmapData.jsonData} />
               ) : (
                 <div>{roadmapData.html}</div>
               )}
@@ -439,6 +586,7 @@ const SearchRoadmap = () => {
                 <button
                   className="py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
                   onClick={saveRoadmapToBackend}
+                  id='SaveRoadmap'
                   disabled={isSaving}
                 >
                   {isSaving ? 'Saving...' : 'Save'}

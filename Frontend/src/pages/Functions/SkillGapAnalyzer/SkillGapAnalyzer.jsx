@@ -1,18 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
 import axios from 'axios';
 import SidebarSub from '../../../component/template/SidebarSub';
-import TopHeader from '../../../component/template/SkillGapTop';
-
-
-
-
-
-
-
-
+import TopHeader from '../../../component/template/TopHeader';
 
 export default function TrendingJobsPage() {
   const navigate = useNavigate();
@@ -47,7 +38,7 @@ export default function TrendingJobsPage() {
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <SidebarSub />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader />
+        <TopHeader HeaderMessage={'Skill Gap Analyzer'} />
 
         <div className="flex-1 overflow-y-auto p-6 bg-white">
           <div className="w-full">

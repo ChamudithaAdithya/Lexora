@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Check, ChevronRight } from 'lucide-react';
 
-const Roadmap = ({ jobGoal , JsonRoadmapData }) => {
+const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
   // Use the passed JsonRoadmapData instead of hardcoded data
   const roadmapData = JsonRoadmapData || {
     "r_Id": 1,
     "job_name": "",
     "main_text": []
   };
-
+  
   // Track completion of steps, subcategories, and main nodes
   const [completedItems, setCompletedItems] = useState({
     mainNodes: [],
@@ -16,8 +16,9 @@ const Roadmap = ({ jobGoal , JsonRoadmapData }) => {
     steps: []
   });
 
-  // Calculate overall progress
+  // Calculate overall progress as a number (0-100)
   const [progress, setProgress] = useState(0);
+  
   const [expanded, setExpanded] = useState(null);
   const [expandedSubs, setExpandedSubs] = useState({});
 
@@ -56,7 +57,34 @@ const Roadmap = ({ jobGoal , JsonRoadmapData }) => {
     });
 
     const totalProgress = totalSubCategories > 0 ? (completedSubCategories / totalSubCategories) * 100 : 0;
-    setProgress(Math.round(totalProgress));
+    const roundedProgress = Math.round(totalProgress);
+    setProgress(roundedProgress);
+    
+    // Call the progress change callback if provided
+    if (onProgressChange) {
+      onProgressChange({
+        overall: roundedProgress,
+        completedItems: completedItems,
+        totalItems: {
+          mainNodes: roadmapData.main_text?.length || 0,
+          subCategories: totalSubCategories,
+          steps: getTotalStepsCount()
+        }
+      });
+    }
+  };
+
+  // Helper function to get total steps count
+  const getTotalStepsCount = () => {
+    let totalSteps = 0;
+    roadmapData.main_text?.forEach(mainText => {
+      mainText.sub_category?.forEach(subCategory => {
+        if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
+          totalSteps += subCategory.sub_steps.length;
+        }
+      });
+    });
+    return totalSteps;
   };
 
   // Check if all steps in a subcategory are completed

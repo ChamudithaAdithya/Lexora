@@ -16,15 +16,33 @@ const categories = [
 
 // Countries data that was missing
 const countries = [
-  { name: 'United States', code: 'US' },
-  { name: 'Canada', code: 'CA' },
-  { name: 'United Kingdom', code: 'UK' },
-  { name: 'Australia', code: 'AU' },
-  { name: 'Germany', code: 'DE' },
-  { name: 'France', code: 'FR' },
-  { name: 'Japan', code: 'JP' },
-  { name: 'India', code: 'IN' },
+  { name: 'Sri Lanka', code: 'LK', flag: '🇱🇰' },
+  { name: 'India', code: 'IN', flag: '🇮🇳' },
+  { name: 'Bangladesh', code: 'BD', flag: '🇧🇩' },
+  { name: 'Pakistan', code: 'PK', flag: '🇵🇰' },
+  { name: 'Nepal', code: 'NP', flag: '🇳🇵' },
+  { name: 'Maldives', code: 'MV', flag: '🇲🇻' },
+  { name: 'Thailand', code: 'TH', flag: '🇹🇭' },
+  { name: 'Malaysia', code: 'MY', flag: '🇲🇾' },
+  { name: 'Singapore', code: 'SG', flag: '🇸🇬' },
+  { name: 'United Arab Emirates', code: 'AE', flag: '🇦🇪' },
+
+  // Other popular countries for jobs
+  { name: 'United States', code: 'US', flag: '🇺🇸' },
+  { name: 'Canada', code: 'CA', flag: '🇨🇦' },
+  { name: 'United Kingdom', code: 'UK', flag: '🇬🇧' },
+  { name: 'Australia', code: 'AU', flag: '🇦🇺' },
+  { name: 'Germany', code: 'DE', flag: '🇩🇪' },
+  { name: 'France', code: 'FR', flag: '🇫🇷' },
+  { name: 'Japan', code: 'JP', flag: '🇯🇵' },
+  { name: 'South Korea', code: 'KR', flag: '🇰🇷' },
+  { name: 'Netherlands', code: 'NL', flag: '🇳🇱' },
+  { name: 'Sweden', code: 'SE', flag: '🇸🇪' },
+  { name: 'Switzerland', code: 'CH', flag: '🇨🇭' },
+  { name: 'Israel', code: 'IL', flag: '🇮🇱' },
+  { name: 'Brazil', code: 'BR', flag: '🇧🇷' },
 ];
+
 
 export default function TrendingJobsPage() {
   const [selectedCategory, setSelectedCategory] = useState('Software Development & Engineering');

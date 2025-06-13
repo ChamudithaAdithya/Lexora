@@ -3,6 +3,8 @@ import RoadmapDetails from '../../../component/Roadmaps/RoadmapDetails';
 import SidebarSub from '../../../component/template/SidebarSub';
 import TopHeader from '../../../component/template/TopHeader';
 import { Link } from 'react-router';
+import axios from 'axios';
+import Roadmap from '../../../component/Roadmaps/Roadmap';
 
 
 
@@ -10,6 +12,7 @@ import { Link } from 'react-router';
 export default function RoadmapPage() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [roadmapData,setRoadmapData] = useState(null);
 
 
 
@@ -37,6 +40,16 @@ export default function RoadmapPage() {
     setter(!currentState);
   };
 
+  const handleEdit = (id) => {
+    try {
+      const response = axios.get(`http://localhost:8080/api/roadmaps/rid/${id}`);
+      response.then((e)=>setRoadmapData(e.data));
+      console.log(roadmapData);
+    } catch (error) {
+      alert("Connection Failiure");
+    }
+  };
+
   
   return (
     <div className="flex overflow-hidden ">
@@ -46,8 +59,8 @@ export default function RoadmapPage() {
         <div className="flex-1 overflow-y-auto p-6">
           <div className=" mx-auto">
             <div className="bg-white  overflow-hidden">
-              
-              
+              {roadmapData == null && 
+              <>
               <Link to={'/searchRoadmap'}>
               <button className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
                       Generate New Roadmap
@@ -59,9 +72,14 @@ export default function RoadmapPage() {
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
                   </div>
                 ) : (
-                  <RoadmapDetails />
+                  <RoadmapDetails handleEdit={handleEdit} />
                 )}
               </div>
+              </>
+            }
+            {roadmapData && 
+              <Roadmap  JsonRoadmapData={roadmapData} />
+            }
             </div>
           </div>
         </div>

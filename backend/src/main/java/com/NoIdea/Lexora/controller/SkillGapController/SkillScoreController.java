@@ -1,5 +1,6 @@
 package com.NoIdea.Lexora.controller.SkillGapController;
 
+import com.NoIdea.Lexora.dto.UserProfile.SkillScoreWithUserDTO;
 import com.NoIdea.Lexora.model.SkillGapModel.SkillScore;
 import com.NoIdea.Lexora.service.SkillGapService.SkillScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "*")
 @RequestMapping("api/v1/skillScores")
 public class SkillScoreController {
 
@@ -62,5 +62,9 @@ public class SkillScoreController {
     public ResponseEntity<Void> deleteAllSkillScores() {
         skillScoreService.deleteAllSkillScores();
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/user/{id}")
+    public List<SkillScoreWithUserDTO> getUserSkillScores(@PathVariable Long id){
+        return skillScoreService.getUserSkillScore(id);
     }
 }

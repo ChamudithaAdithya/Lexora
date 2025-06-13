@@ -1,11 +1,12 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 
-const RoadmapDetails = () => {
+const RoadmapDetails = ({handleEdit}) => {
   const [roadmaps, setRoadmaps] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sampleData,setSampleData] = useState([])
+  const userDetails = JSON.parse(localStorage.getItem("user"));
 
   // Simulating data for demonstration
   useEffect(() => {
@@ -21,7 +22,7 @@ const RoadmapDetails = () => {
 
   const fetchRoadmapDetails = (async()=>{
     try {
-      const response = await axios.get(`http://localhost:8080/api/roadmaps/user/2`);
+      const response = await axios.get(`http://localhost:8080/api/roadmaps/user/${userDetails.user_id}`);
       const dataList = response.data; // Make sure the backend returns an array
       console.log("MAPPED DATA", dataList)
       const mappedData = dataList.map(data => ({
@@ -42,13 +43,6 @@ const RoadmapDetails = () => {
   })
 
   const handleDelete = (id) => {
-    /* if (window.confirm('Are you sure you want to delete this roadmap?')) {
-      // In a real app, you would make an API call to delete
-      // For now, we'll just filter the state
-      setRoadmaps(roadmaps.filter(roadmap => roadmap.r_Id !== id));
-      alert('Roadmap deleted successfully');
-  }
- */
     try {
       const response = axios.delete(`http://localhost:8080/api/roadmaps/rid/${id}`);
       console.log(response.data);
@@ -58,12 +52,6 @@ const RoadmapDetails = () => {
       console.log(error);
       window.alert("Network error. Failed to connect to network. Plaease check your internet connection");
     }
-  };
-
-  const handleEdit = (id) => {
-    // In a real app, you would navigate to the edit page
-    // For demo purposes, we'll just show an alert
-    alert(`Navigating to edit roadmap with ID: ${id}`);
   };
 
   if (isLoading) {
@@ -96,12 +84,7 @@ const RoadmapDetails = () => {
       {roadmaps.length === 0 ? (
         <div className="text-center p-8">
           <p className="text-gray-600">No roadmaps found. Create a new roadmap to get started.</p>
-          <button 
-            className="mt-4 inline-block px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-            onClick={() => alert('Navigate to create roadmap page')}
-          >
-            Create Roadmap
-          </button>
+          
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -126,19 +109,21 @@ const RoadmapDetails = () => {
                   <td className="py-4 px-6 text-sm text-gray-900">{roadmap.job_name}</td>
                   <td className="py-4 px-6 text-sm font-medium text-center">
                     <div className="flex justify-center space-x-2">
-                      {/* <button 
+                      <button 
                         onClick={() => handleEdit(roadmap.r_Id)}
+                        id='ViewRoadmap'
                         className="text-blue-600 hover:text-blue-900 px-3 py-1 bg-blue-100 rounded"
                       >
-                        Edit
-                      </button> */}
+                        View
+                      </button> 
                       <button
                         onClick={() => handleDelete(roadmap.r_Id)}
+                        id='DeleteRoadmap'
                         className="text-red-600 hover:text-red-900 px-3 py-1 bg-red-100 rounded"
                       >
                         Delete
                       </button>
-                    </div>
+                    </div>  
                   </td>
                 </tr>
               ))}

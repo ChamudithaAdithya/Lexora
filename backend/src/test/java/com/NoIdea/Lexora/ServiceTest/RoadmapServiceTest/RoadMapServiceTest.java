@@ -33,6 +33,7 @@ class RoadMapServiceTest {
         sampleRoadmap.setProgress(new HashMap<>());
     }
 
+    // Test successful creation of a new roadmap
     @Test
     void testCreateRoadMapSuccess() {
         when(roadMapRepo.existsByRId("RID123")).thenReturn(false);
@@ -44,6 +45,7 @@ class RoadMapServiceTest {
         verify(roadMapRepo).save(sampleRoadmap);
     }
 
+    // Test that an exception is thrown when roadmap with rId already exists
     @Test
     void testCreateRoadMapThrowsExceptionIfExists() {
         when(roadMapRepo.existsByRId("RID123")).thenReturn(true);
@@ -51,6 +53,7 @@ class RoadMapServiceTest {
                 () -> roadMapService.createRoadMap(sampleRoadmap));
     }
 
+    // Test get all roadmaps
     @Test
     void testGetAllRoadMaps() {
         List<Roadmap> roadmaps = Arrays.asList(sampleRoadmap);
@@ -61,6 +64,7 @@ class RoadMapServiceTest {
         assertEquals(1, result.size());
     }
 
+    // Test retrieving roadmap by rId
     @Test
     void testGetRoadMapByRIdSuccess() {
         when(roadMapRepo.findByRId("RID123")).thenReturn(Optional.of(sampleRoadmap));
@@ -70,6 +74,7 @@ class RoadMapServiceTest {
         assertEquals("RID123", result.get().getrId());
     }
 
+    // Test updating a progress item's status successfully
     @Test
     void testUpdateProgressStatusSuccess() {
         ProgressItem item = new ProgressItem("In Progress", "Started working");
@@ -94,6 +99,7 @@ class RoadMapServiceTest {
                 roadMapService.updateProgressStatus("RID123", "invalidStep", "Done", "Note"));
     }
 
+    // Test deleting a roadmap successfully
     @Test
     void testDeleteRoadMapSuccess() {
         when(roadMapRepo.existsById("1")).thenReturn(true);

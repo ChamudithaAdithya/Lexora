@@ -66,7 +66,7 @@ export function SidebarItem({ icon, text, active, alert, children, alwaysOpen = 
         onClick={() => hasChildren && !alwaysOpen && setIsOpen(!isOpen)}
       >
         <div className={`${active ? 'text-indigo-800' : 'text-gray-500'}`}>{icon}</div>
-        <span className={`overflow-hidden transition-all duration-300 ${expanded ? 'w-52 ml-3' : 'w-0'}`}>{text}</span>
+        <span id={text} className={`overflow-hidden transition-all duration-300 ${expanded ? 'w-52 ml-3' : 'w-0'}`}>{text}</span>
 
         {hasChildren && expanded && !alwaysOpen && (
           <div className="ml-auto">
@@ -112,6 +112,7 @@ export function SidebarItem({ icon, text, active, alert, children, alwaysOpen = 
 export function SidebarSubItem({ text, active }) {
   return (
     <li
+      id={text}
       className={`relative flex items-center py-1.5 px-3 my-1 text-sm font-medium rounded-md cursor-pointer transition-all duration-200 ${
         active ? 'bg-gradient-to-tr from-indigo-100 to-indigo-50 text-indigo-700' : 'hover:bg-indigo-50 text-gray-600'
       }`}

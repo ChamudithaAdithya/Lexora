@@ -1,183 +1,159 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Upload, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import SidebarSub from '../../../component/template/SidebarSub';
+import TopHeader from '../../../component/template/AITopHeader';
+import { Eye, X } from "lucide-react";
 
-export default function PersonaMatcherPage() {
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
-  const [matchedPersonas, setMatchedPersonas] = useState([]);
-  const fileInputRef = useRef(null);
+export default function MatchedPersona() {
+  const [tableData, setTableData] = useState([]); 
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [currentSuggestion, setCurrentSuggestion] = useState('');
+  const [currentPersona, setCurrentPersona] = useState('');
+  const userDetails = JSON.parse(localStorage.getItem('user'));
 
+// Get the user_id
+const userId = userDetails?.user_id;
+
+  const navigate = useNavigate();
+  const handleNavigate = () => { navigate("/Persona") };
+  
   useEffect(() => {
-    // Automatically match personas when files are uploaded
-    if (uploadedFiles.length > 0) {
-      handleMatchPersonas();
-    }
-  }, [uploadedFiles]);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:8080/api/v1/persona/user/${userId}`);
+        console.log('API Response:', response.data); // Log to see the actual structure
+        setTableData(response.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please check your backend.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const handleFileUpload = (event) => {
-    const files = Array.from(event.target.files);
-    const newFiles = files.map((file) => ({
-      file,
-      id: Date.now() + Math.random().toString(36).substr(2, 9),
-      preview: URL.createObjectURL(file),
-      name: file.name
-    }));
-    setUploadedFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    setIsUploading(true);
-  };
+    fetchData();
+  }, []);
 
-  const removeFile = (id) => {
-    const fileToRemove = uploadedFiles.find((fileObj) => fileObj.id === id);
-    if (fileToRemove.preview) {
-      URL.revokeObjectURL(fileToRemove.preview);
-    }
-    const updatedFiles = uploadedFiles.filter((fileObj) => fileObj.id !== id);
-    setUploadedFiles(updatedFiles);
-    
-    if (updatedFiles.length === 0) {
-      setIsUploading(false);
-      setMatchedPersonas([]);
+  const deletePersonas = async () => {
+    try {
+      await axios.delete(`http://localhost:8080/api/v1/persona/user/${userId}`, {
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      alert('Data deleted successfully!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deleting data:', error);
+      alert('Failed to delete data: ' + (error.response?.data || error.message));
     }
   };
 
-  const triggerFileInput = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleMatchPersonas = () => {
-    // Ensure matching occurs when files are uploaded
-    const mockMatchedPersonas = uploadedFiles.map((file, index) => ({
-      id: file.id,
-      name: `Career Persona ${index + 1}`,
-      fileName: file.name,
-      confidence: Math.floor(Math.random() * 100)
-    }));
-
-    setMatchedPersonas(mockMatchedPersonas);
+  const handleViewSuggestion = (suggestion, persona) => {
+    setCurrentSuggestion(suggestion);
+    setCurrentPersona(persona);
+    setShowPopup(true);
   };
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex overflow-hidden">
       <SidebarSub />
-
-      <div className="flex-1 flex flex-col">
-        <header className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <div>
-            <h1 className="text-xl font-semibold text-gray-800">Persona Matcher</h1>
-            <p className="text-sm text-gray-500">My Persona's</p>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-medium mr-2">
-                JS
-              </div>
-              <span className="text-sm font-medium text-gray-700">John Smith</span>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <TopHeader HeaderMessage={'Matched Career Persona'} />
+        <div className="flex-1 overflow-y-auto p-6 bg-white">
+          <div className="container mx-auto px-4 py-4">
+            <div className="overflow-x-auto bg-white rounded-lg shadow-lg border border-blue-100">
+              <table className="min-w-full divide-y divide-blue-200">
+                <thead className="bg-blue-50">
+                  <tr>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">No.</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Career Persona</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Matching %</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-blue-700 uppercase tracking-wider">Suggestions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-blue-100">
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-4 text-center text-blue-800 font-medium">Loading...</td>
+                    </tr>
+                  ) : error ? (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-4 text-center text-red-500 font-medium">{error}</td>
+                    </tr>
+                  ) : tableData.length > 0 ? (
+                    tableData
+                      .filter(row => row.persona !== "---" && row.persona !== null)
+                      .map((row, index) => (
+                        <tr key={index} className={`hover:bg-blue-50 transition-colors duration-150 ${index % 2 === 0 ? 'bg-white' : 'bg-blue-50/30'}`}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900 text-center">{index + 1}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">{row.persona}</td>
+                          <td className="px-6 py-4 text-sm font-medium text-blue-800">{row.matchPrecentage}</td>
+                          <td className="px-6 py-4 text-sm text-gray-600">
+                            <button
+                              onClick={() => handleViewSuggestion(row.suggestion, row.persona)}
+                              className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded flex items-center gap-1"
+                            >
+                              <Eye size={16} /> View
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-4 text-center text-blue-800 font-medium">No career personas found.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </header>
-
-        <main className="p-6 flex-1 overflow-y-auto bg-white">
-          <div className="bg-white">
-            <div className="">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-gray-800">Matched Career Persona's</h2>
-                <button 
-                  onClick={triggerFileInput}
-                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-                >
-                  <Upload className="w-5 h-5" />
-                  Upload Certificates
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                Persona matching will be performed by finding matching persona's based on the certifications provided.
-              </p>
-
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                className="hidden"
-                onChange={handleFileUpload}
-              />
-
-              {uploadedFiles.length === 0 ? (
-               <div
-               className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-blue-300 transition w-[300px] "
-               onClick={triggerFileInput}
-             >
-               <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-               <p className="text-gray-600 mb-2">Upload Certificates</p>
-               <p className="text-sm text-gray-500">Drag and drop or click to browse</p>
-             </div>
-             
-              ) : (
-                <div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    {uploadedFiles.map((fileObj) => (
-                      <div key={fileObj.id} className="relative border rounded-lg overflow-hidden">
-                        <img
-                          src={fileObj.preview}
-                          alt="Preview"
-                          className="w-full h-56 object-cover"
-                        />
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeFile(fileObj.id);
-                          }}
-                          className="absolute top-2 right-2 bg-white/80 rounded-full p-1 hover:bg-white"
-                        >
-                          <X className="w-5 h-5 text-red-500" />
-                        </button>
-                      </div>
-                    ))}
-                    <div 
-                      className="border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center cursor-pointer hover:border-blue-300"
-                      onClick={triggerFileInput}
+            
+            {/* Popup for suggestions */}
+            {showPopup && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full mx-4 max-h-screen overflow-y-auto">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-blue-800">{currentPersona} - Suggestions</h3>
+                    <button 
+                      onClick={() => setShowPopup(false)}
+                      className="text-gray-500 hover:text-gray-700"
                     >
-                      <Upload className="w-8 h-8 text-gray-400 mr-2" />
-                      <span className="text-gray-600">Add More</span>
-                    </div>
+                      <X size={24} />
+                    </button>
                   </div>
-
-                  {/* Matched Personas Section - Always Displayed When Files Exist */}
-                  {/* <div className="mt-8">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Matched Personas</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      {matchedPersonas.map((persona) => (
-                        <div 
-                          key={persona.id} 
-                          className="bg-white border rounded-lg p-4 shadow-sm"
-                        >
-                          <h4 className="font-medium text-gray-700 mb-2">{persona.name}</h4>
-                          <p className="text-sm text-gray-500 mb-2">
-                            File: {persona.fileName}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Confidence: {persona.confidence}%
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </div> */}
+                  <div className="prose prose-blue">
+                    <p className="text-gray-700 whitespace-pre-line">{currentSuggestion}</p>
+                  </div>
+                  <div className="mt-6 flex justify-end">
+                    <button
+                      onClick={() => setShowPopup(false)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
-              )}
+              </div>
+            )}
+              <p>{userId}</p>
+            <div className="flex space-x-4 mt-4">
+              <button 
+                className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-medium shadow-md transition-colors"
+                onClick={handleNavigate}
+              >
+                Update
+              </button>
+              <button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium shadow-md transition-colors"
+                onClick={deletePersonas}
+              >
+                Delete
+              </button>
             </div>
           </div>
-
-          {/* Save Button at Bottom Center */}
-          <div className="fixed bottom-4 left-0 right-0 flex justify-center">
-            <button 
-              className="bg-blue-600 text-white px-6 py-3 rounded-full shadow-lg hover:bg-blue-700 transition"
-              onClick={() => alert('Saved!')}
-            >
-              Save
-            </button>
-          </div>
-        </main>
+        </div>
       </div>
     </div>
   );

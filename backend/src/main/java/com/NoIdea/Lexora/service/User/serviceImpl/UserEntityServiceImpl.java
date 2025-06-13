@@ -79,11 +79,9 @@ public class UserEntityServiceImpl implements UserEntityService {
     }
 
     @Override
-    public String createVerificationRequest(Long id, MultipartFile certificate) throws IOException {
-        UserEntity user = findUserById(id);
-        user.setDegree_certificate(certificate.getBytes());
+    public String createVerificationRequest(UserEntity userEntity) throws IOException {
         try {
-            userEntityRepository.save(user);
+            userEntityRepository.save(userEntity);
             return "Successfully Send the mentor verification request";
         }catch (Exception e){
             return "Failed to send";
