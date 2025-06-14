@@ -1,13 +1,18 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronDown, Check, ChevronRight } from 'lucide-react';
+import { Button } from '@react-pdf-viewer/core';
+import { useNavigate } from 'react-router';
 
-const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
+const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange,handleUpdateRoadmap }) => {
   // Use the passed JsonRoadmapData instead of hardcoded data
   const roadmapData = JsonRoadmapData || {
     "r_Id": 1,
     "job_name": "",
     "main_text": []
   };
+
+  const navigate = useNavigate();
   
   // Track completion of steps, subcategories, and main nodes
   const [completedItems, setCompletedItems] = useState({
@@ -26,9 +31,63 @@ const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
+  // Initialize progress from existing data
+  useEffect(() => {
+    if (roadmapData.progress) {
+      initializeProgressFromData();
+    }
+  }, [roadmapData]);
+
+  // Initialize completed items from the progress data
+  const initializeProgressFromData = () => {
+    const completedSteps = [];
+    const completedSubCategories = [];
+    const completedMainNodes = [];
+
+    // Extract completed steps from progress data
+    Object.entries(roadmapData.progress).forEach(([stepId, stepData]) => {
+      if (stepData.status === 'COMPLETED') {
+        completedSteps.push(stepId);
+      }
+    });
+
+    // Check which subcategories are completed
+    roadmapData.main_text?.forEach(mainText => {
+      mainText.sub_category?.forEach(subCategory => {
+        if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
+          const allStepsCompleted = subCategory.sub_steps.every(step => 
+            completedSteps.includes(step.steps_id)
+          );
+          
+          if (allStepsCompleted) {
+            completedSubCategories.push(subCategory.sub_id);
+          }
+        }
+      });
+    });
+
+    // Check which main nodes are completed
+    roadmapData.main_text?.forEach(mainText => {
+      if (mainText.sub_category) {
+        const allSubCategoriesCompleted = mainText.sub_category.every(subCat => 
+          completedSubCategories.includes(subCat.sub_id)
+        );
+        
+        if (allSubCategoriesCompleted) {
+          completedMainNodes.push(mainText.main_text_id);
+        }
+      }
+    });
+
+    setCompletedItems({
+      steps: completedSteps,
+      subCategories: completedSubCategories,
+      mainNodes: completedMainNodes
+    });
+  };
+
   useEffect(() => {
     calculateProgress();
-    
     // Add scroll event listener
     const handleScroll = () => {
       const position = window.scrollY;
@@ -74,6 +133,10 @@ const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
     }
   };
 
+  const handleCancel = ()=>{
+    navigate("/roadmapDetails")
+  }
+
   // Helper function to get total steps count
   const getTotalStepsCount = () => {
     let totalSteps = 0;
@@ -85,24 +148,6 @@ const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
       });
     });
     return totalSteps;
-  };
-
-  // Check if all steps in a subcategory are completed
-  const areAllStepsCompleted = (subCategoryId, mainNodeId) => {
-    const mainNode = roadmapData.main_text.find(item => item.main_text_id === mainNodeId);
-    const subCategory = mainNode?.sub_category.find(sc => sc.sub_id === subCategoryId);
-    
-    if (!subCategory?.sub_steps || !Array.isArray(subCategory.sub_steps) || subCategory.sub_steps.length === 0) {
-      return true;
-    }
-    
-    return subCategory.sub_steps.every(step => completedItems.steps.includes(step.steps_id));
-  };
-
-  // Check if all subcategories in a main node are completed
-  const areAllSubCategoriesCompleted = (mainNodeId) => {
-    const mainNode = roadmapData.main_text.find(item => item.main_text_id === mainNodeId);
-    return mainNode?.sub_category.every(subCat => completedItems.subCategories.includes(subCat.sub_id));
   };
 
   // Update completion status of steps, which cascades to subcategories and main nodes
@@ -549,6 +594,27 @@ const Roadmap = ({ jobGoal, JsonRoadmapData, onProgressChange }) => {
           })}
         </ul>
       </div>
+      {
+        <div className="mt-4 text-center space-x-4">
+         <button
+            onClick={() => handleCancel()}
+            id='cancel'
+            className="py-2 px-5 bg-gray-100 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-200"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => handleUpdateRoadmap(roadmapData)}
+            id='updateRoadmap'
+            className=" py-2 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-md cursor-pointer"
+          >
+            Update Roadmap
+          </button>
+           
+        </div>
+
+        
+      }
       
       {/* Scroll to top button */}
       {showScrollTop && (

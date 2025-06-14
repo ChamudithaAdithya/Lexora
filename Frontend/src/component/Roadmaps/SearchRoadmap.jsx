@@ -15,7 +15,7 @@ const SearchRoadmap = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [user, setUser] = useState(null);
-  const [Rid, setRid] = useState(1);
+  const [Rid, setRid] = useState(3);
 
   const [progressData, setProgressData] = useState({
     overall: 0,
@@ -29,6 +29,20 @@ const SearchRoadmap = () => {
     console.log('Progress updated:', newProgress);
     setProgressData(newProgress);
   };
+
+  function updateCompletedSteps(roadmapProgress, progressResponse) {
+    const completedSteps = progressResponse.completedItems.steps;
+
+    // Clone the roadmapProgress to avoid mutating original object (optional)
+    const updatedProgress = { ...roadmapProgress };
+
+    for (const stepId in updatedProgress) {
+        if (completedSteps.includes(stepId)) {
+            updatedProgress[stepId].status = "COMPLETED";
+        }
+    }
+    return updatedProgress;
+}
 
   useEffect(() => {
     const userDetails = localStorage.getItem('user');
@@ -110,16 +124,16 @@ const handleProgressUpdate = (updatedProgress) => {
       "userId": ${user.userId},
       "main_text": [
         {
-          "main_text_id": "${r_id}.1",
+          "main_text_id": "${r_id}_1",
           "main_text_name": "Main Category Name",
           "sub_category": [
             {
-              "sub_id": "${r_id}.1.1",
+              "sub_id": "${r_id}_1_1",
               "sub_name": "Sub Category Name",
               "sub_description": "Detailed description of this skill/concept",
               "sub_steps": [
                 {
-                  "steps_id": "${r_id}.1.1.1",
+                  "steps_id": "${r_id}_1_1_1",
                   "steps_description": "Step-by-step detailed task that improves this specific skill"
                 }
               ]
@@ -243,125 +257,6 @@ const handleProgressUpdate = (updatedProgress) => {
     }
   };
 
-
-
-
-
-
-
-
-
-
-
-
-
-  
-  // Convert to save in Backend 
-
-  // Add this function to your Roadmap component
-
-const transformProgressToBackendFormat = () => {
-  const progressData = {};
-  
-  // Iterate through all steps in the roadmap data
-  roadmapData.main_text?.forEach(mainText => {
-    mainText.sub_category?.forEach(subCategory => {
-      if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
-        subCategory.sub_steps.forEach(step => {
-          const isCompleted = completedItems.steps.includes(step.steps_id);
-          progressData[step.steps_id] = {
-            status: isCompleted ? "COMPLETED" : "NOT_STARTED",
-            notes: ""
-          };
-        });
-      }
-    });
-  });
-  
-  return progressData;
-};
-
-// Then modify your calculateProgress function:
-const calculateProgress = () => {
-  let totalSubCategories = 0;
-  let completedSubCategories = 0;
-
-  roadmapData.main_text?.forEach(mainText => {
-    mainText.sub_category?.forEach(subCategory => {
-      totalSubCategories++;
-      if (completedItems.subCategories.includes(subCategory.sub_id)) {
-        completedSubCategories++;
-      }
-    });
-  });
-
-  const totalProgress = totalSubCategories > 0 ? (completedSubCategories / totalSubCategories) * 100 : 0;
-  const roundedProgress = Math.round(totalProgress);
-  setProgress(roundedProgress);
-  
-  // Call the progress change callback with transformed data
-  if (onProgressChange) {
-    const transformedProgress = transformProgressToBackendFormat();
-    
-    onProgressChange({
-      overall: roundedProgress,
-      progress: transformedProgress,
-      // You can also include additional metadata if needed
-      metadata: {
-        totalMainNodes: roadmapData.main_text?.length || 0,
-        totalSubCategories: totalSubCategories,
-        totalSteps: getTotalStepsCount(),
-        completedSteps: completedItems.steps.length,
-        completedSubCategories: completedItems.subCategories.length,
-        completedMainNodes: completedItems.mainNodes.length
-      }
-    });
-  }
-};
-
-// Alternative: If you want to support different status types (IN_PROGRESS, etc.)
-const transformProgressToBackendFormatAdvanced = () => {
-  const progressData = {};
-  
-  roadmapData.main_text?.forEach(mainText => {
-    mainText.sub_category?.forEach(subCategory => {
-      if (subCategory.sub_steps && Array.isArray(subCategory.sub_steps)) {
-        subCategory.sub_steps.forEach(step => {
-          const isCompleted = completedItems.steps.includes(step.steps_id);
-          
-          // You can add more sophisticated status logic here
-          let status = "NOT_STARTED";
-          if (isCompleted) {
-            status = "COMPLETED";
-          }
-          // Add more conditions for IN_PROGRESS, BLOCKED, etc. if needed
-          
-          progressData[step.steps_id] = {
-            status: status,
-            notes: "" // You can extend this to include actual notes if you track them
-          };
-        });
-      }
-    });
-  });
-  
-  return progressData;
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   // Initialize progress tracking for all steps
   const initializeProgress = (roadmapJson) => {
     if (!roadmapJson || !roadmapJson.main_text) return;
@@ -409,6 +304,7 @@ const transformProgressToBackendFormatAdvanced = () => {
     return `${jobRole} Roadmap`;
   };
 
+
   // Save roadmap data to backend
   const saveRoadmapToBackend = async () => {
     if (!roadmapData || !roadmapData.jsonData) {
@@ -421,10 +317,9 @@ const transformProgressToBackendFormatAdvanced = () => {
     try {
       // Make sure we have the correct data structure that matches our backend model
       const roadmapData_json = roadmapData.jsonData;
-
-      // Add user ID to the roadmap if available
-      const userId = user ? user.id || user._id || '' : '';
       setRid(Rid + 1)
+
+      const updatedProgress = updateCompletedSteps(roadmapData_json.progress,progressData );
       
       // Create the roadmap object matching the exact structure of the backend model
       const roadmapToSave = {
@@ -445,15 +340,8 @@ const transformProgressToBackendFormatAdvanced = () => {
           })),
         })),
         // Include the progress data
-        progress: roadmapData_json.progress || {},
+        progress: updatedProgress,
       };
-
-
-      console.log('User roadmapToSave', roadmapToSave);
-      
-      roadmapData_json.progress.forEach(item => {
-        item.key
-      });
 
       // Send data to the backend 
       const response = await axios.post('http://localhost:8080/api/roadmaps', roadmapToSave);

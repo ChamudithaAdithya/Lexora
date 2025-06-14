@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import SearchRoadmap from '../../../component/Roadmaps/SearchRoadmap';
 import SidebarSub from '../../../component/template/SidebarSub';
 import TopHeader from '../../../component/template/TopHeader';
+import { useParams } from 'react-router';
 
 export default function SearchRoadmapPage() {
   const [ setShowProfileDropdown] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const {roadmapData} = useParams();
 
 
   // Simulate loading data
   useEffect(() => {
+    console.log("RAD",roadmapData)
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);

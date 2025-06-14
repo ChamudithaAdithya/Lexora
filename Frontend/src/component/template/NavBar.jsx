@@ -142,16 +142,6 @@ const NavBar = ({ activeNavMenu }) => {
                   Contact Us
                 </div>
               </Link>
-
-              <Link to={'/feedback'}>
-                <div
-                  className={`text-gray-900 hover:text-blue-600 px-3 py-2 font-medium transition-colors duration-200 flex items-center border-b-2 ${
-                    activeNavMenu === 'contactUs' ? 'border-blue-600' : 'border-transparent hover:border-blue-600'
-                  } `}
-                >
-                  Feedback
-                </div>
-              </Link>
             </div>
 
             {/* Auth Buttons */}

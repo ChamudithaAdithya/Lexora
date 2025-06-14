@@ -31,8 +31,8 @@ public class Roadmap {
 //		WebElement signup_email = driver.findElement(By.name("email"));
 //		WebElement signup_password = driver.findElement(By.name("password"));
 //
-//		signup_username.sendKeys("Anjalee");
-//		signup_email.sendKeys("anjalisewmini5@gmail.com");
+//		signup_username.sendKeys("Chathurika");
+//		signup_email.sendKeys("chathurika@gmail.com");
 //		signup_password.sendKeys("12345678");
 
 //		// Click the singUp button
@@ -43,7 +43,7 @@ public class Roadmap {
         WebElement email = driver.findElement(By.name("signinemail"));
         WebElement password = driver.findElement(By.name("signinpassword"));
 
-        email.sendKeys("anjalisewmini5@gmail.com");
+        email.sendKeys("chathurika@gmail.com");
         password.sendKeys("12345678");
 
         //Click the Login button
