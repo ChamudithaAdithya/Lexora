@@ -15,7 +15,7 @@ export default function HomePage() {
 
       <main className="flex-grow">
         {/* Hero Section */}
-        <section className="bg-blue-50 bg-opacity-30 mt-16 py-10 sm:py-16 lg:py-24 w-full">
+        <section className="bg-blue-50 bg-opacity-30 mt-16 py-5 sm:py-5 lg:py-10 w-full">
           <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="grid items-center grid-cols-1 gap-12 lg:grid-cols-2">
               <div className="w-full">

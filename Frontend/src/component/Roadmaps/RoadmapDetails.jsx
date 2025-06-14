@@ -8,6 +8,38 @@ const RoadmapDetails = ({handleEdit}) => {
   const [sampleData,setSampleData] = useState([])
   const userDetails = JSON.parse(localStorage.getItem("user"));
 
+  // Function to calculate progress percentage
+  const calculateProgress = (progressObj) => {
+    if (!progressObj || Object.keys(progressObj).length === 0) {
+      return 0;
+    }
+    
+    const totalSteps = Object.keys(progressObj).length;
+    const completedSteps = Object.values(progressObj).filter(
+      step => step.status === 'COMPLETED'
+    ).length;
+    
+    return Math.round((completedSteps / totalSteps) * 100);
+  };
+
+  // Function to get progress bar color based on percentage
+  const getProgressColor = (percentage) => {
+    if (percentage >= 80) return 'bg-green-500';
+    if (percentage >= 60) return 'bg-blue-500';
+    if (percentage >= 40) return 'bg-yellow-500';
+    if (percentage >= 20) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
+  // Function to get text color based on percentage
+  const getTextColor = (percentage) => {
+    if (percentage >= 80) return 'text-green-600';
+    if (percentage >= 60) return 'text-blue-600';
+    if (percentage >= 40) return 'text-yellow-600';
+    if (percentage >= 20) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
   // Simulating data for demonstration
   useEffect(() => {
     // In a real application, you would use axios to fetch data
@@ -24,15 +56,16 @@ const RoadmapDetails = ({handleEdit}) => {
     try {
       const response = await axios.get(`http://localhost:8080/api/roadmaps/user/${userDetails.user_id}`);
       const dataList = response.data; // Make sure the backend returns an array
-      console.log("MAPPED DATA", dataList)
       const mappedData = dataList.map(data => ({
         r_Id: data.r_Id,
         job_name: data.job_name,
+        progress: calculateProgress(data.progress), // Calculate progress percentage
       }));
-      
-
       setSampleData(mappedData);
       setRoadmaps(mappedData);
+      console.log("This is the progress", mappedData
+        
+      );
       setError(null);
     } catch (err) {
       console.error('Error fetching roadmaps:', err);
@@ -45,12 +78,11 @@ const RoadmapDetails = ({handleEdit}) => {
   const handleDelete = (id) => {
     try {
       const response = axios.delete(`http://localhost:8080/api/roadmaps/rid/${id}`);
-      console.log(response.data);
       alert('Roadmap deleted successfully');
+      window.location.reload();
       fetchRoadmapDetails();
     } catch (error) {
-      console.log(error);
-      window.alert("Network error. Failed to connect to network. Plaease check your internet connection");
+      window.alert("Network error. Failed to connect to network. Please check your internet connection");
     }
   };
 
@@ -97,6 +129,9 @@ const RoadmapDetails = ({handleEdit}) => {
                 <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Job Name
                 </th>
+                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Progress
+                </th>
                 <th className="py-3 px-6 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
                 </th>
@@ -107,6 +142,21 @@ const RoadmapDetails = ({handleEdit}) => {
                 <tr key={roadmap.r_Id} className="hover:bg-gray-50">
                   <td className="py-4 px-6 text-sm text-gray-900">{roadmap.r_Id}</td>
                   <td className="py-4 px-6 text-sm text-gray-900">{roadmap.job_name}</td>
+                  <td className="py-4 px-6 text-sm text-gray-900">
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-1">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                          <div 
+                            className={`h-2.5 rounded-full transition-all duration-300 ${getProgressColor(roadmap.progress)}`}
+                            style={{ width: `${roadmap.progress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                      <span className={`text-sm font-semibold min-w-[3rem] ${getTextColor(roadmap.progress)}`}>
+                        {roadmap.progress}%
+                      </span>
+                    </div>
+                  </td>
                   <td className="py-4 px-6 text-sm font-medium text-center">
                     <div className="flex justify-center space-x-2">
                       <button 
@@ -114,7 +164,7 @@ const RoadmapDetails = ({handleEdit}) => {
                         id='ViewRoadmap'
                         className="text-blue-600 hover:text-blue-900 px-3 py-1 bg-blue-100 rounded"
                       >
-                        View
+                        Update
                       </button> 
                       <button
                         onClick={() => handleDelete(roadmap.r_Id)}

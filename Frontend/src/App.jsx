@@ -47,6 +47,8 @@ import AboutUsPage from './pages/Home/AboutUsPage';
 import AdminMentorRequests from './pages/Home/Admin/AdminMentorRequests';
 import AppsPage from './pages/Home/AppsPage';
 import Dashboard from './pages/Dashboard';
+import ViewAllFeedbacks from './pages/Admin/ViewAllFeedbacksPage';
+
 import MentorDashboardNew from './pages/Functions/MentorMenteeMatchmaking/MentorDashboardNew';
 import JoinMeetingPage from './pages/Functions/MentorMenteeMatchmaking/JoinMeetingPage';
 import CreateMeetingPage from './pages/Functions/MentorMenteeMatchmaking/CreateMeetingPage';
@@ -56,6 +58,7 @@ import RequestSessionPage from './pages/Functions/MentorMenteeMatchmaking/Mentor
 import NotificationPage from './pages/Notifications/NotificationPage';
 import MentorStatsDashboardPage from './pages/Functions/MentorMenteeMatchmaking/Mentor/MentorStatsDashboardPage';
 import MentorFeedbackPage from './pages/Functions/MentorMenteeMatchmaking/Mentor/MentorFeedbacksPage';
+
 
 function App() {
   return (
@@ -73,6 +76,7 @@ function App() {
           <Route path="/aboutus" element={<AboutUsPage />} />
           <Route path="/app" element={<AppsPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          
           {/* <Route path="/PersonaMatching" element={<CareerPersosna />} />
           <Route path="/Personas" element={<MatchedPersosna />} />
           <Route path="/persona" element={<Persona />} /> */}
@@ -115,6 +119,7 @@ function App() {
             <Route path="/sk4" element={<Skill5 />} />
             {/* Admin */}
             <Route path="/Admin/MentorRequests" element={<AdminMentorRequests />} />
+            <Route path="/Adminfeedback" element={<ViewAllFeedbacks />} />
             <Route path="/notifications" element={<NotificationPage />} />
             {/* Mentor Mentee Matchmaking New */}
             <Route path="/mentorDashboardNew" element={<MentorDashboardNew />} /> // these are linked with suggested

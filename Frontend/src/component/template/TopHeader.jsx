@@ -144,6 +144,7 @@ export default function TopHeader({ HeaderMessage, handleGetUserDetails }) {
   // Fetch profile details and notifications on mount
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
+
     if (user?.user_id && user?.token) {
       // Fetch profile
       userProfileHandleService
