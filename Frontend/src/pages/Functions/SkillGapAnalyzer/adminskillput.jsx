@@ -27,6 +27,7 @@ export default function SkillListPage() {
   const [isCreating, setIsCreating] = useState(false);
 
   const token = localStorage.getItem('token');
+  console.log('token ',token)
 
   useEffect(() => {
     const fetchSkills = async () => {
@@ -322,7 +323,7 @@ export default function SkillListPage() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader HeaderMessage={'Persona Matcher'} />
+        <TopHeader HeaderMessage={' Analyser'} />
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 bg-white">

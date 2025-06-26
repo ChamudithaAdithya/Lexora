@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
+import { Briefcase, ChevronDown, Globe, ArrowLeft, TrendingUp, Filter, X } from 'lucide-react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import SidebarSub from '../../../component/template/SidebarSub';
@@ -25,6 +27,7 @@ export default function AdminSkillQuizPage() {
   const [editingQuestion, setEditingQuestion] = useState(null);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
   const [originalJobRoleData, setOriginalJobRoleData] = useState(null);
+   
 
   // New question form state
   const [newQuestion, setNewQuestion] = useState({
@@ -92,9 +95,8 @@ export default function AdminSkillQuizPage() {
   const saveChanges = async () => {
 
     try {
-      const userDetails = localStorage.getItem("user");
-  console.log(userDetails);
-      const token = userDetails.token; // Adjust based on your auth implementation
+       const userDetails = JSON.parse(localStorage.getItem('user'));
+  const user = userDetails?.token; // Adjust based on your auth implementation
       
       // Update the original job role data with current questions
       const updatedJobRoleData = { ...originalJobRoleData };
@@ -119,15 +121,15 @@ export default function AdminSkillQuizPage() {
           skillQuestions
         };
       });
-
+        con
       const response = await axios.post(
         `http://localhost:8080/api/v1/jobRole`,
         [updatedJobRoleData],
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+  'Authorization': `Bearer ${user}`,
+  'Content-Type': 'application/json'
+}
         }
       );
 
@@ -138,7 +140,7 @@ export default function AdminSkillQuizPage() {
       }
     } catch (err) {
       console.error('Error saving changes:', err);
-      alert('Failed to save changes. Please try again.');
+      alert(err);
     }
   };
 
@@ -330,7 +332,7 @@ export default function AdminSkillQuizPage() {
             onClick={() => addNewAnswer(questionIndex)}
             className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
           >
-            Add Answer
+            Add Answer{user}
           </button>
           
           <div className="space-x-3">
@@ -643,7 +645,7 @@ export default function AdminSkillQuizPage() {
     <div className="flex h-screen overflow-hidden bg-gray-50">
       <SidebarSub />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <TopHeader HeaderMessage={'Persona Matcher'} />
+        <TopHeader HeaderMessage={'analyser'} />
         <div className="flex-1 overflow-y-auto p-6 bg-white">
           <div className="border-b-2 border-solid border-gray-300 mb-6">
             <div className="flex justify-between items-center">

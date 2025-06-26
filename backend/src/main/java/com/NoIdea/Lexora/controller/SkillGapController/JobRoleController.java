@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("api/v1/jobRole")
+@CrossOrigin
 public class JobRoleController {
     @Autowired
     private JobRoleService jobRoleService;
