@@ -70,4 +70,49 @@ public class JobRoleServiceImpl implements JobRoleService {
         jobRoleRepo.deleteAll();
     }
 
+    @Override
+    public boolean deleteSkill(int id){
+        List<JobRoleEntity> jobRoleEntities=jobRoleRepo.findAll();
+        for(JobRoleEntity jobRoleEntity :jobRoleEntities){
+            boolean remove=jobRoleEntity.getSkillLists().removeIf(skillList -> skillList.getSkillId()==id);
+            if(remove){
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public boolean deleteQuestion(int id) {
+        List<JobRoleEntity> jobRoleEntities = jobRoleRepo.findAll();
+        for (JobRoleEntity jobRole : jobRoleEntities) {
+            for (SkillList skillList : jobRole.getSkillLists()) {
+                boolean remove = skillList.getSkillQuestions().removeIf(skillQuestion -> skillQuestion.getQuestionId() == id);
+                {
+                    if (remove) {
+                        return true;
+                    }
+                }
+            }
+
+        }
+        return false;
+    }
+    @Override
+    public boolean deleteAnswer(int id){
+        List<JobRoleEntity> jobRoleEntities=jobRoleRepo.findAll();
+        for(JobRoleEntity jobRoleEntity:jobRoleEntities){
+            for(SkillList skillList:jobRoleEntity.getSkillLists()){
+                for(SkillQuestion skillQuestion: skillList.getSkillQuestions()){
+                    boolean remove=skillQuestion.getSkillAnswers().removeIf(skillAnswer -> skillAnswer.getSkillAnswerId()==id);
+                    if(remove){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
+
+
+

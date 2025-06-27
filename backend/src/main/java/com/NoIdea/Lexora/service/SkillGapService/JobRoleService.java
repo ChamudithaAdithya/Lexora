@@ -13,4 +13,7 @@ public interface JobRoleService {
     public List<JobRoleEntity> updateJobRole(List<JobRoleEntity> jobRoles);
     public void deleteJobRole(int id);
     public void deleteAllJobRole();
+    public boolean deleteSkill(int id);
+    public boolean deleteQuestion(int id);
+    public boolean deleteAnswer(int id);
 }

@@ -4,6 +4,7 @@ import com.NoIdea.Lexora.dto.UserProfile.SkillScoreWithUserDTO;
 import com.NoIdea.Lexora.model.SkillGapModel.SkillScore;
 import com.NoIdea.Lexora.model.User.UserEntity;
 import com.NoIdea.Lexora.repository.SkillGapRepo.SkillScoreRepo;
+import com.NoIdea.Lexora.repository.User.UserEntityRepository;
 import com.NoIdea.Lexora.service.SkillGapService.SkillScoreService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ import java.util.Optional;
 public class SkillScoreServiceImpl implements SkillScoreService {
     @Autowired
     private SkillScoreRepo skillScoreRepo;
+
+    @Autowired
+    private UserEntityRepository userEntityRepository;
 
     @Override
     public List<SkillScore> getAllSkillScores() {
@@ -61,9 +65,9 @@ public class SkillScoreServiceImpl implements SkillScoreService {
                         score.getSkillScoreId(),
                         score.getPredictedScore(),
                         score.getTotalQuestions(),
-                        score.getLearningPath(),
-                        score.getSkillName(),
                         score.getJobRoleName(),
+                        score.getSkillName(),
+                        score.getLearningPath(),
                         score.getCourseLinks(),
                         user.getUser_id()
 
@@ -74,4 +78,61 @@ public class SkillScoreServiceImpl implements SkillScoreService {
         }
         return getScores;
     }
+    @Override
+    public SkillScoreWithUserDTO saveUserSkillScore(Long id, SkillScoreWithUserDTO userScore) {
+        Optional<UserEntity> userOptional = userEntityRepository.findById(id);
+
+        if (!userOptional.isPresent()) {
+            throw new RuntimeException("User not found with ID: " + id);
+        }
+
+        UserEntity user = userOptional.get();
+        SkillScore saved = null;
+
+        List<SkillScore> existingScores = user.getSkillScores();
+        boolean isUpdated = false;
+
+        if (existingScores != null) {
+            for (SkillScore existing : existingScores) {
+                if (existing != null &&
+                        existing.getJobRoleName().equals(userScore.getJobRoleName()) &&
+                        existing.getSkillName().equals(userScore.getSkillName())) {
+
+                    existing.setPredictedScore(userScore.getPredictedScore());
+                    existing.setTotalQuestions(userScore.getTotalQuestions());
+                    existing.setLearningPath(userScore.getLearningPath());
+                    existing.setCourseLinks(userScore.getCourseLinks());
+
+                    saved = skillScoreRepo.save(existing);
+                    isUpdated = true;
+                    break; // Exit loop after updating
+                }
+            }
+        }
+
+        if (!isUpdated) {
+            SkillScore newScore = new SkillScore();
+            newScore.setPredictedScore(userScore.getPredictedScore());
+            newScore.setSkillName(userScore.getSkillName());
+            newScore.setTotalQuestions(userScore.getTotalQuestions());
+            newScore.setJobRoleName(userScore.getJobRoleName());
+            newScore.setLearningPath(userScore.getLearningPath());
+            newScore.setCourseLinks(userScore.getCourseLinks());
+            newScore.setUserEntity(user);
+
+            saved = skillScoreRepo.save(newScore);
+        }
+
+        return new SkillScoreWithUserDTO(
+                saved.getSkillScoreId(),
+                saved.getPredictedScore(),
+                saved.getTotalQuestions(),
+                saved.getJobRoleName(),
+                saved.getSkillName(),
+                saved.getLearningPath(),
+                saved.getCourseLinks(),
+                saved.getUserEntity().getUser_id()
+        );
+    }
+
 }

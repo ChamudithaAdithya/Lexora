@@ -214,12 +214,12 @@ export default function SkillQuizPage() {
 
                 <div className="flex justify-between mt-8">
                   <div className="text-sm text-gray-500">
-                    {answeredQuestions > 0 && (
+                    {/* {answeredQuestions > 0 && (
                       <span>Current score: {score}/{answeredQuestions}</span>
-                    )}
+                    )} */}
                   </div>
 
-                  <p>
+                  {/* <p>
                     Predicted score:{' '}
                     {score + (
                       selectedAnswer &&
@@ -229,7 +229,7 @@ export default function SkillQuizPage() {
                         ? 1
                         : 0
                     )}
-                  </p>
+                  </p> */}
 
                   <button
                     onClick={handleNextQuestion}

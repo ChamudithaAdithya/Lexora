@@ -1,3 +1,4 @@
+
 # <type>: <short summary>
 #
 # Detailed description:
@@ -13,3 +14,4 @@
 #   refactor = Code restructuring
 #   test     = Adding or fixing tests
 #   chore    = Maintenance
+
