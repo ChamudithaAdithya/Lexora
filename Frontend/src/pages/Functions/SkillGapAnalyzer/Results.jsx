@@ -44,6 +44,8 @@ export default function TrendingJobsPage() {
   const [showLearningPathPopup, setShowLearningPathPopup] = useState(false);
   const chatSessionRef = useRef(null);
   const modalRef = useRef(null);
+  const userDetails = JSON.parse(localStorage.getItem('user'));
+  const userId = userDetails?.user_id;
   
   // Check if there are wrong questions
   const hasWrongQuestions = wrongQuestions && wrongQuestions.length > 0;
@@ -193,7 +195,7 @@ export default function TrendingJobsPage() {
         courseLinksArray.push("Unary Learning Platform - https://www.unary.com");
       }
       
-      const response = await axios.post('http://localhost:8080/api/v1/skillScores', {
+      const response = await axios.post(`http://localhost:8080/api/v1/skillScores/user/${userId}`, {
         predictedScore: predictedScore, // Changed from 'score' to match backend entity
         totalQuestions: totalQuestions, // Changed from 'totalScore' to match backend entity
         learningPath: learningPathString,

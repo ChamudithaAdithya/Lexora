@@ -25,4 +25,7 @@ public class PersonaMatchingModel {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity userEntity;
+
+
+
 }
