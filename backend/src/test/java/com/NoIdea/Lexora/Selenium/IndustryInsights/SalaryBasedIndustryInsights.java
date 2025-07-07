@@ -43,8 +43,8 @@ public class SalaryBasedIndustryInsights {
         WebElement email = driver.findElement(By.name("signinemail"));
         WebElement password = driver.findElement(By.name("signinpassword"));
 
-        email.sendKeys("anjalisewmini5@gmail.com");
-        password.sendKeys("12345678");
+        email.sendKeys("abc@gmail.com");
+        password.sendKeys("00000000");
 
         //Click the Login button
         WebElement loginButton = driver.findElement(By.id("loginButton"));
