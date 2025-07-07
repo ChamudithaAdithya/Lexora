@@ -381,6 +381,7 @@ export default function PersonaMatcherPage() {
               <input
                 ref={fileInputRef}
                 type="file"
+                id="uploadInput"
                 multiple
                 accept=".pdf,.jpg,.jpeg,.png"
                 className="hidden"
