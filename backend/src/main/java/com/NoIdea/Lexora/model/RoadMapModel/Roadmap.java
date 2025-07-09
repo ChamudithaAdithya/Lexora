@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @Document(collection = "roadmaps")
@@ -68,9 +69,8 @@ public class Roadmap {
 
 
     @Field("r_Id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonProperty("r_Id")
-    private String rId;
+    private String rId = generateRId();
 
     @Field("job_name")
     @JsonProperty("job_name")
@@ -111,6 +111,17 @@ public class Roadmap {
 
         public void setNotes(String notes) {
             this.notes = notes;
+        }
+    }
+
+    private static String generateRId() {
+        return "RID-" + UUID.randomUUID().toString();
+    }
+
+    public Roadmap() {
+        // You can also set rId here if not already set above
+        if (this.rId == null) {
+            this.rId = generateRId();
         }
     }
 }
