@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import userProfileHandleService from '../../services/userProfileHandleService';
 import Alert from '../../component/template/alert/Alert';
-
+import SignUp from '../../assets/images/SignUp.jpg'; 
+// Assuming the image path is correct
 export default function SignUpPage() {
   const [formData, setFormData] = useState({ username: '', email: '', password: '' });
   const navigate = useNavigate();
@@ -129,9 +130,9 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          <div class="flex items-center justify-center px-4 py-10 sm:py-16 lg:py-24 bg-gray-50 sm:px-6 lg:px-8">
+          <div>
             <div>
-              <img class="w-full mx-auto" src={SignUp} alt="" />
+              <img src={SignUp} alt="" />
             </div>
           </div>
         </div>

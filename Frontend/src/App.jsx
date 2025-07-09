@@ -72,7 +72,7 @@ function App() {
           {/* LEXORA COMMON PAGES  */}
           {/* <Route path="/" element={<Home />} /> */}
           <Route path="/signIn" element={<SignIn />} />
-          <Route path="/signUp" element={<SignUpPage />} />
+          <Route path="/signUpPage" element={<SignUpPage />} />
           <Route path="/contactUs" element={<ContactUsPage />} />
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/team" element={<TeamPage />} />
