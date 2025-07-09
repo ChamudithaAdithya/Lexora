@@ -61,7 +61,7 @@ const SearchRoadmap = () => {
   const navigate = useNavigate();
 
   const API_KEY = 'AIzaSyByT6KBGcqhOdxRtoFS5THhh70B9Z9QKi0';
-  const [r_id, setR_id] = useState(2);
+  const [r_id, setR_id] = useState('');
 
   const handleInitialSubmit = () => {
     if (searchInput.trim() === '') {
@@ -314,13 +314,13 @@ const SearchRoadmap = () => {
     try {
       // Make sure we have the correct data structure that matches our backend model
       const roadmapData_json = roadmapData.jsonData;
-      setRid(Rid + 1);
+      
 
       const updatedProgress = updateCompletedSteps(roadmapData_json.progress, progressData);
 
       // Create the roadmap object matching the exact structure of the backend model
       const roadmapToSave = {
-        r_Id: Rid,
+        
         job_name: roadmapData_json.job_name,
         userId: user.user_id,
         main_text: roadmapData_json.main_text.map((mainItem) => ({

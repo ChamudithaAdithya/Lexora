@@ -31,6 +31,7 @@ export default function SkillQuizPage() {
     const fetchJobRoleData = async () => {
       try {
         const id = jobRoleId || '13';
+        //fetch data
         const response = await axios.get(`http://localhost:8080/api/v1/jobRole/${id}`);
         const data = response.data;
 

@@ -39,16 +39,16 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(c -> c.disable())
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(a -> a.requestMatchers("/login", "/api/v1/auth/login", "/api/v1/auth/register")
-                        .permitAll().anyRequest()
-                        .authenticated())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .authenticationProvider(authenticationProvider())
-                .httpBasic(Customizer.withDefaults())
-                .build();
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(c -> c.disable())
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(a -> a.requestMatchers("/login", "/api/v1/auth/login", "/api/v1/auth/register")
+                    .permitAll().anyRequest()
+                    .authenticated())
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+            .authenticationProvider(authenticationProvider())
+            .httpBasic(Customizer.withDefaults())
+            .build(); 
     }
 
     @Bean
@@ -70,7 +70,7 @@ public class SecurityConfig {
         provider.setUserDetailsService(userDetails());
         return provider;
     }
-
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12);

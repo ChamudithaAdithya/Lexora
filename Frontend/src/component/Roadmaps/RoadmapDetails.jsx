@@ -116,7 +116,7 @@ const RoadmapDetails = ({ handleEdit }) => {
           <table className="min-w-full bg-white border border-gray-200 rounded-lg">
             <thead className="bg-gray-100">
               <tr>
-                <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                
                 <th className="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Job Name
                 </th>
@@ -131,7 +131,7 @@ const RoadmapDetails = ({ handleEdit }) => {
             <tbody className="divide-y divide-gray-200">
               {roadmaps.map((roadmap) => (
                 <tr key={roadmap.r_Id} className="hover:bg-gray-50">
-                  <td className="py-4 px-6 text-sm text-gray-900">{roadmap.r_Id}</td>
+                  
                   <td className="py-4 px-6 text-sm text-gray-900">{roadmap.job_name}</td>
                   <td className="py-4 px-6 text-sm text-gray-900">
                     <div className="flex items-center space-x-3">

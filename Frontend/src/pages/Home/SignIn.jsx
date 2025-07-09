@@ -39,7 +39,7 @@ export default function SignIn() {
               <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">Sign in</h2>
               <div className="flex justify object-center m-2 ">
                 <p className="text-base text-gray-600 mr-1">Don’t have an account? </p>
-                <Link to={'/signUp'}>
+                <Link to={'/signUpPage'}>
                   <div
                     href=""
                     title=""
