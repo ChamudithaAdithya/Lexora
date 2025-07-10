@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.BeforeEach;
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -12,8 +11,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
 
@@ -26,7 +23,6 @@ public class RoadmapTest {
 
     private WebDriver driver;
     private WebDriverWait wait;
-    private Path tempProfileDir;
 
     @BeforeEach
     public void setUp() throws IOException {
