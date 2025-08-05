@@ -224,7 +224,7 @@ export default function DollarChart({ DataSet, DataType }) {
   if (!processedData || processedData.length === 0) {
     return (
       <div className="p-4 rounded flex items-center justify-center h-80">
-        <p className="text-gray-500">No data available to display</p>
+        <p className="text-gray-500">Dollar Chart Not available it Trending Skills</p>
       </div>
     );
   }
@@ -241,7 +241,12 @@ export default function DollarChart({ DataSet, DataType }) {
   return (
     <div className="p-4 rounded">
       <div className="h-80">
-        {DataType !== 'Jobs' && (
+        {DataType == 'Skils' && DataType !== 'Jobs' && (
+          <div className="p-4 rounded flex items-center justify-center h-80">
+            <p className="text-gray-500">Bar Chart Not available for {Datatype} Trendings</p>
+          </div>
+        )}
+        {DataType == 'Salary' && (
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={processedData} margin={{ top: 10, right: 10, left: 0, bottom: 10 }}>
               <defs>

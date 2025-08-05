@@ -14,12 +14,12 @@ export default function BarChart({ Datatype, DataSet }) {
 
   return (
     <>
-      {Datatype == 'Salary' && (
-        <div className="screen-full">
-          <p>Salary Trends are not visible in Bar Charts</p>
+      {Datatype != 'Jobs' && Datatype != 'Jobs' && (
+        <div className="p-4 rounded flex items-center justify-center h-80">
+          <p className="text-gray-500">Bar Chart Not available for {Datatype} Trendings</p>
         </div>
       )}
-      {Datatype == 'Jobs' && (
+      {Datatype == 'Salary' && Datatype == 'Skills' && (
         <div className="space-y-4">
           {processedJobs.map((job) => (
             <div key={job.role} className="flex items-center">
