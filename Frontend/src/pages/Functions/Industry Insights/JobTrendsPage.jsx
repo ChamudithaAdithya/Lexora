@@ -116,7 +116,6 @@ const countries = [
   { name: 'Brazil', code: 'BR', flag: '🇧🇷' },
 ];
 
-
 // Time-related data
 const years = ['2023', '2024', '2025', '2026'];
 const months = [
@@ -202,7 +201,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
   }, [searchTerm, isOpen]);
 
   return (
-    <div className="relative" id='Country'>
+    <div className="relative" id="Country">
       <div
         className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
         onClick={() => setIsOpen(!isOpen)}
@@ -215,7 +214,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
 
       {isOpen && (
         <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-64">
-          <div className="p-2 border-b">
+          <div className="p-2 ">
             <input
               id="SearchCountries"
               type="text"
@@ -230,7 +229,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
           <div className="max-h-60 overflow-y-auto py-1">
             {filteredCountries.map((country) => (
               <div
-              id={country.name}
+                id={country.name}
                 key={country.code}
                 className={`flex items-center gap-2 px-3 py-2 cursor-pointer hover:bg-gray-100 ${
                   selectedCountry.code === country.code ? 'bg-blue-50 text-blue-700' : ''
@@ -296,7 +295,7 @@ const TimePeriodSelector = ({
   };
 
   return (
-    <div className="relative" id='DateTime'>
+    <div className="relative" id="DateTime">
       <div
         className="flex items-center gap-2 px-3 py-2 bg-white rounded-md border border-gray-200 cursor-pointer hover:bg-gray-50 transition-colors shadow-sm"
         onClick={() => setIsOpen(!isOpen)}
@@ -309,7 +308,7 @@ const TimePeriodSelector = ({
       {isOpen && (
         <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-72">
           {/* Time granularity tabs */}
-          <div className="flex bg-gray-50 p-1 rounded-t-md">
+          <div className="flex bg-gray-50 p-1 rounded-t-md pb-3 pt-3">
             {[
               { id: 'year', label: 'Yearly', icon: Calendar },
               { id: 'month', label: 'Monthly', icon: Calendar },
@@ -335,7 +334,7 @@ const TimePeriodSelector = ({
           </div>
 
           {/* Year selection */}
-          <div className="p-3 border-b">
+          <div className="p-3">
             <div className="text-xs text-gray-500 font-medium mb-2">Year</div>
             <div className="grid grid-cols-4 gap-2">
               {years.map((year) => (
@@ -357,7 +356,7 @@ const TimePeriodSelector = ({
 
           {/* Month selection - visible when in month or week mode */}
           {(timeFilterMode === 'month' || timeFilterMode === 'week') && (
-            <div className="p-3 border-b">
+            <div className="p-3">
               <div className="text-xs text-gray-500 font-medium mb-2">Month</div>
               <div className="grid grid-cols-4 gap-2">
                 {months.map((month) => (
@@ -382,7 +381,7 @@ const TimePeriodSelector = ({
 
           {/* Week selection - visible only in week mode */}
           {timeFilterMode === 'week' && weeks.length > 0 && (
-            <div className="p-3 border-b max-h-44 overflow-y-auto">
+            <div className="p-3 max-h-44 overflow-y-auto">
               <div className="text-xs text-gray-500 font-medium mb-2">Week</div>
               <div className="grid grid-cols-2 gap-2">
                 {weeks.map((week) => (
@@ -408,7 +407,7 @@ const TimePeriodSelector = ({
           {/* Apply button */}
           <div className="p-2 flex justify-end bg-gray-50 rounded-b-md">
             <button
-              id='ApplyDateTime'
+              id="ApplyDateTime"
               className="px-4 py-1.5 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors"
               onClick={(e) => {
                 e.stopPropagation();
@@ -444,7 +443,7 @@ const TimePeriodToggle = ({ timeFilterMode, setTimeFilterMode }) => {
           title={period.label}
         >
           <period.icon size={16} />
-          <span className="text-xs font-medium">{period.label}</span>
+          <span className="text-xs font-medium ">{period.label}</span>
         </button>
       ))}
     </div>
@@ -673,6 +672,5 @@ export default function JobTrendingsPage() {
     </div>
   );
 }
-
 
 export { TimePeriodSelector, getWeeksInMonth };
