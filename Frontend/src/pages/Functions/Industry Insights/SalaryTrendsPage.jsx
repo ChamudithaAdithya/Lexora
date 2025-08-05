@@ -223,7 +223,7 @@ const CountrySelector = ({ selectedCountry, setSelectedCountry }) => {
 
       {isOpen && (
         <div className="absolute left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-20 w-64">
-          <div className="p-2 border-b">
+          <div className="p-2">
             <input
               id="SearchCountries"
               type="text"
