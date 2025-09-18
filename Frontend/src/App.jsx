@@ -65,6 +65,7 @@ import NotificationPage from './pages/Notifications/NotificationPage';
 import MentorStatsDashboardPage from './pages/Functions/MentorMenteeMatchmaking/Mentor/MentorStatsDashboardPage';
 import MentorFeedbackPage from './pages/Functions/MentorMenteeMatchmaking/Mentor/MentorFeedbacksPage';
 import ModelViewer from './3DAnimster/ModelViewer';
+import UnauthorizeViewer from './3DAnimster/unauthorizeViewer';
 
 function App() {
   return (
@@ -83,8 +84,9 @@ function App() {
           <Route path="/app" element={<AppsPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/animater" element={<ModelViewer/>} />
+          <Route path="/unauthorizeViewer" element={<UnauthorizeViewer/>} />
 
-          {/* <Route path="/PersonaMatching" element={<CareerPersosna />} />
+          {/* <Route path="/PersonaMatching" element={<CareerPersosna />} /> 
           <Route path="/Personas" element={<MatchedPersosna />} />
           <Route path="/persona" element={<Persona />} /> */}
           <Route path="/rgapi" element={<RoadmapGeminiApi />} />
